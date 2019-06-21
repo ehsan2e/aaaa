@@ -49,6 +49,59 @@ class ProductCategory extends Model
 
     /**
      * @param array $data
+     * @param null $insight
+     * @return bool
+     * @throws SupervisedTransactionException
+     * @throws \Exception
+     */
+    public function updateInfo(array $data, &$insight): bool
+    {
+        return supervisedTransaction(function ($insight) use ($data): bool {
+            /** @var Collection $collection */
+            $collection = self::lockForUpdate()->where('id', $this->id)->orWhere('parent_id', $this->id)->get();
+            if (count($collection) > 1) {
+                /** @var PostCategory $instance */
+                $instance = $collection->first(function ($item) {
+                    return $item->id == $this->id;
+                });
+                $hasChildren = true;
+            } else {
+                /** @var PostCategory $instance */
+                $instance = $collection->first();
+                $hasChildren = false;
+            }
+            if (
+                $hasChildren &&
+                (
+                    (!isset($data['parent_id']) && isset($instance->parent_id))
+                    || (isset($data['parent_id']) && ($instance->parent_id != $data['parent_id']))
+                )
+            ) {
+                $insight->message = __('Cannot change the parent of a category which already has children');
+                return false;
+            }
+
+            $instance->fill($data);
+            $instance->active = isset($data['active']);
+            if (isset($data['parent_id'])) {
+                /** @var ProductCategory $parent */
+                $parent = self::lockForUpdate()->find($data['parent_id']);
+                if (!$parent) {
+                    throw new SupervisedTransactionException('Parent does not exist');
+                }
+                $instance->address = $parent->getChildrenAddress();
+                $instance->parentCategory()->associate($parent);
+            } else {
+                $instance->address = null;
+                $instance->parent_id = null;
+            }
+
+            return $instance->save();
+        }, false, false, false, $insight);
+    }
+
+    /**
+     * @param array $data
      * @param $insight
      * @return PostCategory|null
      * @throws SupervisedTransactionException

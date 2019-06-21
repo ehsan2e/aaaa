@@ -13,5 +13,7 @@ return [
             'display' => 'Fr',
             'name' => 'Français',
         ],
-    ]
+    ],
+    'box_category_code' => env('BOX_CATEGORY_CODE', 'box'),
+    'box_service_category_code' => env('BOX_SERVICE_CATEGORY_CODE', 'box_service'),
 ];

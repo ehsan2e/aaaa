@@ -10,7 +10,7 @@
                         <nav class="nav nav-pills flex-column flex-sm-row">
                             <span class="text-sm-center">{{ __('Product Category list') }}</span>
                             <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.admin.catalog.product-category.create') }}">{{ __('Create Product Category') }}</a></span>
-                        </nav>01
+                        </nav>
                     </div>
 
                     <div class="card-body">

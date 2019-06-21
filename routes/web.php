@@ -42,7 +42,7 @@ Route::prefix('dashboard')
                     ->name('catalog.')
                     ->group(function(){
                         Route::resource('product-category', 'ProductCategoryController', ['except' => ['show', 'destroy']]);
-                        Route::resource('product-type', 'ProductCategoryController', ['except' => ['show', 'destroy']]);
+                        Route::resource('product-type', 'ProductController', ['except' => ['show', 'destroy']]);
                     });
 
                 Route::prefix('cms')

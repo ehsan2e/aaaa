@@ -109,6 +109,27 @@ class ProductCategoryController extends AbstarctAdminController
      */
     public function update(Request $request, ProductCategory $productCategory)
     {
-        //
+        $data = $request->all();
+        $request->validate([
+            'parent_id' => [],
+            'code' => [Rule::unique('product_categories')->whereNotNull('code')->ignore($productCategory->id)],
+            'name' => ['required'],
+            'active' => ['boolean'],
+            'custom_attributes' => ['array', new AttributeSet()],
+            'custom_attributes.*' => [],
+            'custom_attributes.*.name' => ['required'],
+            'custom_attributes.*.caption' => ['required'],
+            'custom_attributes.*.required' => ['boolean'],
+            'custom_attributes.*.type' => ['required', Rule::in(array_keys(ProductCategory::getAttributeTypes()))],
+            'custom_attributes.*.lookupValues' => ['required_if:custom_attributes.*.type,lookup', 'array', 'min:1', new AttributeSetLookupValue($data)],
+            'custom_attributes.*.lookupValues.*.caption' => ['required'],
+            'custom_attributes.*.lookupValues.*.value' => ['required'],
+        ]);
+        if ($productCategory->updateInfo($data, $insight)) {
+            flash()->success($insight->message ?? __('Product category :name was updated successfully', ['name' => $data['name']]));
+            return redirect()->route('dashboard.admin.catalog.product-category.index');
+        }
+        flash()->error($insight->message ?? __('An unknown error happened please try again later'));
+        return back()->withInput();
     }
 }
