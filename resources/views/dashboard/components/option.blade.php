@@ -1,0 +1,1 @@
+<option value="{{ $value ?? '' }}" @if($value == ($selectedValue ?? '')) selected @endif>{{  $slot }}</option>
