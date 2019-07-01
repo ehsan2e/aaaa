@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -42,6 +43,22 @@ class PostCategory extends Model
     public function parentCategory(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id', 'id');
+    }
+
+    /**
+     * @param Builder $builder
+     */
+    public function scopeActive(Builder $builder)
+    {
+        $builder->where('active', true);
+    }
+
+    /**
+     * @param Builder $builder
+     */
+    public function scopeActiveLanguage(Builder $builder)
+    {
+        $builder->where('language', app()->getLocale());
     }
 
     /**

@@ -11,14 +11,14 @@
                             <span class="text-sm-center">{{ __('Add Supplier') }}</span>
                             <span class="text-sm-center ml-auto">
                                 <a class="btn btn-sm btn-primary"
-                                   href="{{ route('dashboard.admin.supplier.index') }}">{{ __('Back') }}</a>
+                                   href="{{ route('dashboard.admin.catalog.supplier.index') }}">{{ __('Back') }}</a>
                             </span>
                         </nav>
                     </div>
 
                     <div class="card-body">
-                        <form action="{{ route('dashboard.admin.supplier.store') }}" method="post">
-                            @include('dashboard.admin.supplier.form')
+                        <form action="{{ route('dashboard.admin.catalog.supplier.store') }}" method="post">
+                            @include('dashboard.admin.catalog.supplier.form')
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">

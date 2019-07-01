@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard\Admin;
+namespace App\Http\Controllers\Dashboard\Admin\Catalog;
 
+use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
 use App\Supplier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -22,7 +23,7 @@ class SupplierController extends AbstarctAdminController
     /**
      * @var string
      */
-    protected $viewBasePath = 'supplier';
+    protected $viewBasePath = 'catalog.supplier';
 
     /**
      * @return Builder
@@ -65,7 +66,7 @@ class SupplierController extends AbstarctAdminController
 
         if (Supplier::createNewSupplier($data, $insight)) {
             flash()->success($insight->message ?? __('Supplier :name was added successfully', ['name' => $data['name']]));
-            return redirect()->route('dashboard.admin.supplier.index');
+            return redirect()->route('dashboard.admin.catalog.supplier.index');
         }
 
         flash()->error($insight->message ?? __('An unknown error happened please try again later'));
@@ -81,7 +82,7 @@ class SupplierController extends AbstarctAdminController
     public function edit(Supplier $supplier)
     {
         $supplier->load(['user']);
-        return $this->renderForm('dashboard.admin.supplier.edit', compact('supplier'));
+        return $this->renderForm('dashboard.admin.catalog.supplier.edit', compact('supplier'));
     }
 
     /**
@@ -116,7 +117,7 @@ class SupplierController extends AbstarctAdminController
 
         if ($supplier->updateInfo($data, $insight)) {
             flash()->success($insight->message ?? __('Supplier :name was updated successfully', ['name' => $data['name']]));
-            return redirect()->route('dashboard.admin.supplier.index');
+            return redirect()->route('dashboard.admin.catalog.supplier.index');
         }
         flash()->error($insight->message ?? __('An unknown error happened please try again later'));
         return back()->withInput();

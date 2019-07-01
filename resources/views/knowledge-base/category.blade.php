@@ -28,5 +28,5 @@
 @endsection
 
 @section('content')
-    @component('knowledge-base.partials.post', compact('post'))@endcomponent
+    @component('knowledge-base.partials.post-listing', compact('posts'))@endcomponent
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\QueryException;
@@ -33,6 +34,22 @@ class Post extends Model
             return url($this->url->path);
         }
         return route('knowledge-base.post', ['post' => $this]);
+    }
+
+    /**
+     * @param Builder $builder
+     */
+    public function scopeActive(Builder $builder)
+    {
+        $builder->where('active', true);
+    }
+
+    /**
+     * @param Builder $builder
+     */
+    public function scopeActiveLanguage(Builder $builder)
+    {
+        $builder->where('language', app()->getLocale());
     }
 
     /**

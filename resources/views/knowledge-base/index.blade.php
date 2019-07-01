@@ -23,6 +23,10 @@
     <meta name="twitter:image" content="{{ $knowledgeBaseImage }}">
 @endsection
 
+@section('menu')
+    @component('knowledge-base.partials.menu', compact('postCategories'))@endcomponent
+@endsection
+
 @section('content')
-<b>dfld</b>
+    @component('knowledge-base.partials.post-listing', compact('posts'))@endcomponent
 @endsection

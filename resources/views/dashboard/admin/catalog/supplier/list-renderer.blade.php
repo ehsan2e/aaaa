@@ -7,6 +7,6 @@
     <td>@date($item->created_at)</td>
     <td>
         <a class="btn btn-sm btn-primary"
-           href="{{ route('dashboard.admin.supplier.edit', ['supplier' => $item]) }}">{{ __('Edit') }}</a>
+           href="{{ route('dashboard.admin.catalog.supplier.edit', ['supplier' => $item]) }}">{{ __('Edit') }}</a>
     </td>
 </tr>

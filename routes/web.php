@@ -35,7 +35,6 @@ Route::prefix('dashboard')
             ->name('admin.')
             ->middleware(['role.check:' . \App\Role::ROLE_ADMIN])
             ->group(function () {
-                Route::resource('supplier', 'SupplierController');
 
                 Route::prefix('catalog')
                     ->namespace('Catalog')
@@ -43,6 +42,14 @@ Route::prefix('dashboard')
                     ->group(function(){
                         Route::resource('product-category', 'ProductCategoryController', ['except' => ['show', 'destroy']]);
                         Route::resource('product-type', 'ProductTypeController', ['except' => ['show', 'destroy']]);
+                        Route::resource('supplier', 'SupplierController', ['except'  => ['destroy', 'show']]);
+                    });
+
+                Route::prefix('crm')
+                    ->namespace('Crm')
+                    ->name('crm.')
+                    ->group(function(){
+//                        Route::resource('client', 'SupplierController', ['except'  => ['destroy', 'show']]);
                     });
 
                 Route::prefix('cms')
@@ -82,5 +89,5 @@ Route::prefix('knowledge-base')
     ->group(function () {
         Route::get('/', 'KnowledgeBaseController@index')->name('index');
         Route::get('/category/{category}', 'KnowledgeBaseController@categoryIndex')->name('category');
-        Route::get('/post/{post}', 'KnowledgeBaseController@postIndex')->name('post');
+        Route::get('/post/{post}', 'KnowledgeBaseController@post')->name('post');
     });

@@ -54,18 +54,14 @@
             <div class="row justify-content-center">
                 <div class="col-md-4">
                     <div class="card">
-                        <div class="card-header">{{ __('Categories') }}</div>
                         <div class="card-body">
+                            <div class="card-title"><b>{{ __('Categories') }}</b></div>
                             @yield('menu')
                         </div>
                     </div>
                 </div>
                 <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-body">
-                            @yield('content')
-                        </div>
-                    </div>
+                    @yield('content')
                 </div>
             </div>
         </div>

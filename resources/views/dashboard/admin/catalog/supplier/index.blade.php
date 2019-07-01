@@ -9,7 +9,7 @@
                     <div class="card-header">
                         <nav class="nav nav-pills flex-column flex-sm-row">
                             <span class="text-sm-center">{{ __('Supplier list') }}</span>
-                            <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.admin.supplier.create') }}">{{ __('Add Supplier') }}</a></span>
+                            <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.admin.catalog.supplier.create') }}">{{ __('Add Supplier') }}</a></span>
                         </nav>
                     </div>
 
@@ -24,7 +24,7 @@
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
                             ],
-                            'renderer' => 'dashboard.admin.supplier.list-renderer',
+                            'renderer' => 'dashboard.admin.catalog.supplier.list-renderer',
                         ]){{ __('No supplier were found') }}@endcomponent
                     </div>
                 </div>
