@@ -5,7 +5,7 @@
     </a>
 
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="crmDropdown">
-        <a class="dropdown-item @inactivepath('clients', 'active')" href="{{ /*route('dashboard.admin.crm.post-category.index')*/ '#' }}">{{ __('Clients') }}</a>
+        <a class="dropdown-item @inactivepath('clients', 'active')" href="{{ route('dashboard.admin.crm.client.index') }}">{{ __('Clients') }}</a>
         <a class="dropdown-item @inactivepath('support-ticket', 'active')" href="{{ /*route('dashboard.admin.crm.post-category.index')*/ '#' }}">{{ __('Support Ticket') }}</a>
     </div>
 </li>

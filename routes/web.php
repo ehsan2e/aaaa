@@ -46,10 +46,10 @@ Route::prefix('dashboard')
                     });
 
                 Route::prefix('crm')
-                    ->namespace('Crm')
+                    ->namespace('CRM')
                     ->name('crm.')
                     ->group(function(){
-//                        Route::resource('client', 'SupplierController', ['except'  => ['destroy', 'show']]);
+                        Route::resource('client', 'ClientController', ['except'  => ['destroy']]);
                     });
 
                 Route::prefix('cms')
