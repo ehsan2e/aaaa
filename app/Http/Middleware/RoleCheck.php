@@ -16,7 +16,7 @@ class RoleCheck
      */
     public function handle($request, Closure $next, $role)
     {
-        if(Auth::guest() || Auth::user()->role->isNotA($role)){
+        if(Auth::guest() || Auth::user()->isNotA($role)){
             return abort(403);
         }
         return $next($request);

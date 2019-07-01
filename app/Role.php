@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Role extends Model
 {
-    //
     const ROLE_ADMIN = 1;
     const ROLE_CLIENT = 2;
     const ROLE_SUPPLIER = 3;
@@ -63,8 +62,8 @@ class Role extends Model
         return $this->isA(self::ROLE_SUPPLIER);
     }
 
-    public function users(): HasMany
+    public function users(): BelongsToMany
     {
-        return $this->hasMany(User::class, 'role_id', 'id');
+        return $this->belongsToMany(User::class, 'user_roles', 'role_id', 'user_id', 'id', 'id', 'users');
     }
 }

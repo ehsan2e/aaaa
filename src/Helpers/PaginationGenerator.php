@@ -31,6 +31,10 @@ class PaginationGenerator implements iPaginationGenerator
     protected
         $queryParamName = 'q';
     /**
+     * @var array
+     */
+    protected $queryParamFilters = [];
+    /**
      * @var bool
      */
     protected
@@ -51,18 +55,22 @@ class PaginationGenerator implements iPaginationGenerator
      * @param array $requestData
      * @param Builder $queryBuilder
      */
-    public
-    function __construct(array $requestData, Builder $queryBuilder)
+    public function __construct(array $requestData, Builder $queryBuilder)
     {
         $this->requestData = $requestData;
         $this->queryBuilder = $queryBuilder;
     }
 
+    public function bindQueryParamFilter(string $paramName, $handler): iPaginationGenerator
+    {
+        $this->queryParamFilters[$paramName] = $handler;
+        return $this;
+    }
+
     /**
      * @return string
      */
-    public
-    function getCollectionName(): string
+    public function getCollectionName(): string
     {
         return $this->collectionName;
     }
@@ -70,8 +78,7 @@ class PaginationGenerator implements iPaginationGenerator
     /**
      * @return string
      */
-    public
-    function getQueryParamName(): string
+    public function getQueryParamName(): string
     {
         return $this->queryParamName;
     }
@@ -79,8 +86,7 @@ class PaginationGenerator implements iPaginationGenerator
     /**
      * @return array
      */
-    public
-    function getSearchableFields(): array
+    public function getSearchableFields(): array
     {
         return $this->searchableFields;
     }
@@ -89,8 +95,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param bool $allowed
      * @return iPaginationGenerator
      */
-    public
-    function rawQuery(bool $allowed): iPaginationGenerator
+    public function rawQuery(bool $allowed): iPaginationGenerator
     {
         $this->rawQueryAllowed = $allowed;
         return $this;
@@ -100,8 +105,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param array $data
      * @return View
      */
-    public
-    function render(array $data = []): View
+    public function render(array $data = []): View
     {
         if (!isset($this->viewName)) {
             throw new \RuntimeException('View is not set');
@@ -133,6 +137,16 @@ class PaginationGenerator implements iPaginationGenerator
                 }
             }
         }
+        if(count($this->queryParamFilters) > 0){
+            foreach ($this->queryParamFilters as $queryParam => $filter){
+                if(!isset($this->requestData[$queryParam])){
+                    continue;
+                }
+                if(is_scalar($filter)){
+                    $queryBuilder->where($filter, $this->requestData[$queryParam]);
+                }
+            }
+        }
         $queryError = null;
         try {
             $collection = $queryBuilder->paginate();
@@ -155,8 +169,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param string $collectionName
      * @return iPaginationGenerator
      */
-    public
-    function setCollectionName(string $collectionName): iPaginationGenerator
+    public function setCollectionName(string $collectionName): iPaginationGenerator
     {
         $this->collectionName = $collectionName;
         return $this;
@@ -166,8 +179,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param string $queryParamName
      * @return iPaginationGenerator
      */
-    public
-    function setQueryParamName(string $queryParamName): iPaginationGenerator
+    public function setQueryParamName(string $queryParamName): iPaginationGenerator
     {
         $this->queryParamName = $queryParamName;
         return $this;
@@ -177,8 +189,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param $searchableFields
      * @return iPaginationGenerator
      */
-    public
-    function setSearchableFields($searchableFields): iPaginationGenerator
+    public function setSearchableFields($searchableFields): iPaginationGenerator
     {
         $this->searchableFields = $searchableFields;
         return $this;
@@ -188,8 +199,7 @@ class PaginationGenerator implements iPaginationGenerator
      * @param string $view
      * @return iPaginationGenerator
      */
-    public
-    function view(string $view): iPaginationGenerator
+    public function view(string $view): iPaginationGenerator
     {
         $this->viewName = $view;
         return $this;

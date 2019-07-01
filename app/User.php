@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -40,6 +41,21 @@ class User extends Authenticatable
     ];
 
     /**
+     * @var boolean|null
+     */
+    protected $userIsAnAdmin;
+
+    /**
+     * @var boolean|null
+     */
+    protected $userIsAClient;
+
+    /**
+     * @var boolean|null
+     */
+    protected $userIsASupplier;
+
+    /**
      * @param array $data
      * @return array
      */
@@ -67,11 +83,50 @@ class User extends Authenticatable
     }
 
     /**
+     * @param string $ability
+     * @return bool
+     */
+    public function isAble(string $ability): bool
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->can($ability)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param int $type
+     * @return bool
+     */
+    public function isA(int $type): bool
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->isA($type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @return bool
      */
     public function isAdmin(): bool
     {
-        return $this->role->isAdmin();
+        if (!isset($this->userIsAnAdmin)) {
+            $this->userIsAnAdmin = false;
+            foreach ($this->roles as $role) {
+                if ($role->isAdmin()) {
+                    $this->userIsAnAdmin = true;
+                    break;
+                }
+            }
+        }
+        return $this->userIsAnAdmin;
     }
 
     /**
@@ -79,7 +134,25 @@ class User extends Authenticatable
      */
     public function isClient(): bool
     {
-        return $this->role->isClient();
+        if (!isset($this->userIsAClient)) {
+            $this->userIsAClient = false;
+            foreach ($this->roles as $role) {
+                if ($role->isClient()) {
+                    $this->userIsAClient = true;
+                    break;
+                }
+            }
+        }
+        return $this->userIsAClient;
+    }
+
+    /**
+     * @param int $type
+     * @return bool
+     */
+    public function isNotA(int $type): bool
+    {
+        return !$this->isA($type);
     }
 
     /**
@@ -87,15 +160,24 @@ class User extends Authenticatable
      */
     public function isSupplier(): bool
     {
-        return $this->role->isSupplier();
+        if (!isset($this->userIsASupplier)) {
+            $this->userIsASupplier = false;
+            foreach ($this->roles as $role) {
+                if ($role->isSupplier()) {
+                    $this->userIsASupplier = true;
+                    break;
+                }
+            }
+        }
+        return $this->userIsASupplier;
     }
 
     /**
-     * @return BelongsTo
+     * @return BelongsToMany
      */
-    public function role(): BelongsTo
+    public function roles(): BelongsToMany
     {
-        return $this->belongsTo(Role::class, 'role_id', 'id');
+        return $this->belongsToMany(Role::class, 'user_roles', 'user_id', 'role_id', 'id', 'id', 'roles');
     }
 
     /**
@@ -110,8 +192,35 @@ class User extends Authenticatable
      * @param array $data
      * @return bool
      */
-    public function updateProfile(array $data){
+    public function updateProfile(array $data)
+    {
         $this->fill($this->prepareProfileData($data));
         return $this->save();
+    }
+
+    /**
+     * @param string $modelClass
+     * @return array
+     */
+    public function getModelAccessibleFields(string $modelClass): array
+    {
+        if($this->can('model_access_all')){
+            return ['*'];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param string $modelClass
+     * @return array
+     */
+    public function getModelAccessibleRelations(string $modelClass): array
+    {
+        if($this->can('model_access_all')){
+            return ['*'];
+        }
+
+        return [];
     }
 }

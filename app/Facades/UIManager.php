@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Facade;
  *
  * @method static \NovaVoip\Helpers\UIManager addToActivePath(string $path)
  * @method static array getActivePath()
- * @method static bool isInActivePath(string $path)
+ * @method static bool isInActivePath(string|array $path)
  * @method static \NovaVoip\Helpers\UIManager setActivePath(string[] ...$activePath)
  */
 class UIManager extends Facade

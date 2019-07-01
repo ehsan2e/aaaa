@@ -42,7 +42,9 @@ class AppServiceProvider extends ServiceProvider
             return "<?php if(\\App\\Facades\\UIManager::isInActivePath({$expression})): ?>";
         });
         Blade::directive('inactivepath', function($expression){
-            list($path, $class) = explode(',', $expression);
+            $parts = explode(',', $expression);
+            $class = array_splice($parts, count($parts)- 1)[0];
+            $path = implode(',', $parts);
             return "<?php if(\\App\\Facades\\UIManager::isInActivePath({$path})): echo e({$class}); endif; ?>";
         });
         array_map(function($type){
@@ -53,6 +55,13 @@ class AppServiceProvider extends ServiceProvider
         }, ['admin', 'client', 'supplier']);
         CustomUrlHandler::add('\\App\\Http\\Controllers\\KnowledgeBaseController@displayPostCategory', __('Post Category Handler'))
             ->add('\\App\\Http\\Controllers\\KnowledgeBaseController@displayPost', 'Post Handler');
+
+        Blade::directive('someError', function($expression){
+            return "<?php if(array_reduce({$expression}, function(\$hasError, \$name) use (\$errors){return \$hasError || \$errors->has(\$name);}, false)): ?>";
+        });
+        Blade::directive('endSomeError', function($expression){
+            return '<?php endif; ?>';
+        });
 
     }
 }

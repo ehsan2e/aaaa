@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Dashboard\Admin\CMS;
 
 use App\CustomUrl;
 use App\Facades\CustomUrlHandler;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
 use App\Rules\JsonObjectString;
 use Illuminate\Database\Eloquent\Builder;

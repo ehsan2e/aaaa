@@ -16,13 +16,8 @@ class TestController extends Controller
 {
     protected function a(Request $request)
     {
-        $result = supervisedTransaction(function($insight){
-            $insight->message = 'adaf';
-            throw new SupervisedTransactionException();
-            return true;
-        }, false, false, true, $insight);
-        dd($result, $insight);
-        return Auth::user()->role->abilities;
+        $this->authorize('mama');
+        return Auth::user()->load('roles.abilities');
     }
 
     public function index(Request $request, string $method)

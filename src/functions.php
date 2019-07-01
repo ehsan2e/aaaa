@@ -10,7 +10,7 @@ use NovaVoip\Exceptions\SupervisedTransactionException;
 function sortedLanguages(): array
 {
     $languages = config('nova.language');
-    uasort($languages, function($a, $b){
+    uasort($languages, function ($a, $b) {
         return ($a['display'] <=> $b['display']);
     });
     return $languages;
@@ -26,37 +26,106 @@ function sortedLanguages(): array
  * @throws Exception
  * @throws SupervisedTransactionException
  */
-function supervisedTransaction(callable $fn, $errorResult=false, bool $rethrow=false, bool $silent=false, &$insight)
+function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow = false, bool $silent = false, &$insight)
 {
-    try{
-        $result=new \stdClass();
-        $result->succeed=$errorResult;
+    try {
+        $result = new \stdClass();
+        $result->succeed = $errorResult;
         $result->bag = new \stdClass();
         $result->bag->message = null;
         $result->bag->normal = true;
-        DB::transaction(function() use ($fn, $result) {
+        DB::transaction(function () use ($fn, $result) {
             $result->succeed = $fn($result->bag);
         });
         return $result->succeed;
-    }catch(QueryException | SupervisedTransactionException $xException){
+    } catch (QueryException | SupervisedTransactionException $xException) {
         $result->bag->normal = false;
         $result->bag->premtionType = get_class($xException);
-        $result->bag->exception =$xException;
+        $result->bag->exception = $xException;
         logger($xException->getMessage());
-        if($rethrow){
+        if ($rethrow) {
             throw $xException;
         }
         return $errorResult;
-    }catch (Exception $exception){
+    } catch (Exception $exception) {
         $result->bag->normal = false;
         $result->bag->premtionType = SupervisedTransactionException::class;
-        $result->bag->exception =$exception;
+        $result->bag->exception = $exception;
         logger($exception);
-        if(!$silent){
+        if (!$silent) {
             throw $exception;
         }
         return $errorResult;
-    }finally{
+    } finally {
         $insight = $result->bag;
     }
+}
+
+/**
+ * @param array $dictionary
+ * @param bool $isBakend
+ * @param string $default
+ * @return string
+ */
+function extractTranslationFromAssociativeArray(array $dictionary, bool $isBakend = false, string $default = ''): string
+{
+    $locale = app()->getLocale();
+    $fallbackLocale = config('app.fallback_locale');
+    if ($isBakend) {
+        return empty($dictionary['backend']) ? $default : $dictionary['backend'];
+    }
+
+    return empty($dictionary[$locale]) ? (empty($dictionary[$fallbackLocale]) ? $default : $dictionary[$fallbackLocale]) : $dictionary[$locale];
+}
+
+/**
+ * @param object $dictionary
+ * @param bool $isBakend
+ * @param string $default
+ * @return string
+ */
+function extractTranslationFromObject($dictionary, bool $isBakend = false, string $default = ''): string
+{
+    $locale = app()->getLocale();
+    $fallbackLocale = config('app.fallback_locale');
+    if ($isBakend) {
+        return empty($dictionary->backend) ? $default : $dictionary->backend;
+    }
+
+    return empty($dictionary->{$locale}) ? (empty($dictionary->{$fallbackLocale}) ? $default : $dictionary->{$fallbackLocale}) : $dictionary->{$locale};
+}
+
+/**
+ * @param array|object $entity
+ * @param string $key
+ * @param string|null $translationsKey
+ * @param bool $isBakend
+ * @param string $default
+ * @return string
+ */
+function translateEntity($entity, string $key = 'name', string $translationsKey = null, bool $isBakend = false, string $default = ''): string
+{
+    $translationsKey = $translationsKey ?? ($key . 'trnaslations');
+    if (is_array($entity)) {
+        if (!isset($entity[$translationsKey])) {
+            return empty($entity[$key]) ? $default : $entity[$key];
+        } elseif (is_array($entity[$translationsKey])) {
+            return extractTranslationFromAssociativeArray($entity[$translationsKey], $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
+        } elseif (is_object($entity[$translationsKey])) {
+            return extractTranslationFromObject($entity[$translationsKey], $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
+        } else {
+            throw new \RuntimeException('Dictionary is not of valid type');
+        }
+    } elseif (is_object($entity)) {
+        if (!isset($entity->{$translationsKey})) {
+            return empty($entity->{$key}) ? $default : $entity->{$key};
+        } elseif (is_array($entity->{$translationsKey})) {
+            return extractTranslationFromAssociativeArray($entity->{$translationsKey}, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
+        } elseif (is_object($entity->{$translationsKey})) {
+            return extractTranslationFromObject($entity->{$translationsKey}, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
+        } else {
+            throw new \RuntimeException('Dictionary is not of valid type');
+        }
+    }
+    throw new \InvalidArgumentException('Entity can be either array or object');
 }

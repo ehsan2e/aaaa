@@ -47,12 +47,20 @@ class UIManager
     }
 
     /**
-     * @param string $path
+     * @param string|array $path
      * @return bool
      */
-    public function isInActivePath(string $path): bool
+    public function isInActivePath($path): bool
     {
-        return isset($this->activePath[$path]);
+        if (is_scalar($path)) {
+            return isset($this->activePath[$path]);
+        }
+        foreach ($path as $p) {
+            if (isset($this->activePath[$p])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

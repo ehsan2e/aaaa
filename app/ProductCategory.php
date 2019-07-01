@@ -6,15 +6,64 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use NovaVoip\Exceptions\SupervisedTransactionException;
 use function NovaVoip\supervisedTransaction;
+use function NovaVoip\translateEntity;
 
 class ProductCategory extends Model
 {
     const CATEGORY_BOX = 'box';
     const CATEGORY_BOX_SERVICE = 'box-service';
-    protected $casts = ['active' => 'boolean', 'custom_attributes'=>'array'];
+    protected $casts = ['active' => 'boolean', 'custom_attributes' => 'array'];
     protected $fillable = ['code', 'name', 'custom_attributes'];
     protected $table = 'product_categories';
 
+    /**
+     * @param bool $isBackend
+     * @param string $prefix
+     * @return array
+     */
+    public function getCustomAttributeCaptions(bool $isBackend = false, string $prefix = 'custom_attributes.'): array
+    {
+        $captions = [];
+        foreach ($this->custom_attributes as $customAttribute){
+            $captions[$prefix . $customAttribute['name']] = translateEntity($customAttribute, 'caption', 'captions', $isBackend);
+        }
+        return $captions;
+    }
+
+    /**
+     * @param string $prefix
+     * @return array
+     */
+    function getCustomAttributeValidationRules(string $prefix = 'custom_attributes.'): array
+    {
+        if (!isset($this->custom_attributes)) {
+            return [];
+        }
+        $rules = [];
+        foreach ($this->custom_attributes as $customAttribute) {
+            $r = [];
+            if ($customAttribute['required']) {
+                $r[] = 'required';
+            } else {
+                $r[] = 'nullable';
+            }
+            switch ($customAttribute['type']){
+                case'price':
+                case'decimal':
+                    $r[] = 'numeric';
+                    break;
+                case'integer':
+                    $r[] = 'integer';
+                    break;
+                case 'lookup':
+                    $r[] = 'in:' . array_reduce($customAttribute['lookupValues'] ?? [], function($values, $lookupValue){ return $values . ($values === '' ? '' : ',') . $lookupValue['value'];}, '');
+                    break;
+            }
+            $rules[$prefix . $customAttribute['name']] = $r;
+        }
+        return $rules;
+
+    }
 
     /**
      * @return stirng
@@ -29,23 +78,6 @@ class ProductCategory extends Model
         return $this->belongsTo(self::class, 'parent_id', 'id');
     }
 
-    /**
-     * @return array
-     */
-    public static function getAttributeTypes(): array
-    {
-        return [
-            'boolean' => 'Boolean',
-            'decimal' => 'Decimal',
-            'html' => 'Html',
-            'integer' => 'Integer',
-            'lookup' => 'Lookup',
-            'picture' => 'Picture',
-            'price' => 'Price',
-            'string' => 'String',
-            'text' => 'Text',
-        ];
-    }
 
     /**
      * @param array $data
@@ -129,5 +161,23 @@ class ProductCategory extends Model
             }
             return $instance;
         }, null, false, false, $insight);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAttributeTypes(): array
+    {
+        return [
+            'boolean' => 'Boolean',
+            'decimal' => 'Decimal',
+            'html' => 'Html',
+            'integer' => 'Integer',
+            'lookup' => 'Lookup',
+            'picture' => 'Picture',
+            'price' => 'Price',
+            'string' => 'String',
+            'text' => 'Text',
+        ];
     }
 }

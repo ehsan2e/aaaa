@@ -21,7 +21,7 @@ class PostController extends AbstarctAdminController
     protected $collectionName = 'posts';
 
     /**
-     * @var
+     * @var array
      */
     protected $searchableFields = ['posts.code', 'posts.language', 'posts.title', 'post_categories.name', 'users.name'];
 
