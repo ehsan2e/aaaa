@@ -41,13 +41,21 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
-                            <a href="{{ route('dashboard.profile') }}" class="dropdown-item @inactivepath('profile', 'active')">{{ __('Profile') }}</a>
+                            <a href="{{ route('dashboard.profile') }}"
+                               class="dropdown-item @inactivepath('profile', 'active')">{{ __('Profile') }}</a>
                             <a href="{{ route('dashboard.change-password') }}"
                                class="dropdown-item @inactivepath('change-password', 'active')">{{ __('Change Password') }}</a>
+                            <a class="dropdown-item" href="{{ route('dashboard.lock-screen') }}"
+                               onclick="event.preventDefault(); document.getElementById('lock-screen-form').submit();">
+                                {{ __('Lock Screen') }}
+                            </a>
+                            <form id="lock-screen-form" action="{{ route('dashboard.lock-screen') }}" method="POST"
+                                  style="display: none;">
+                                @csrf
+                            </form>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{{ route('logout') }}"
-                               onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                               onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                 {{ __('Logout') }}
                             </a>
 
@@ -55,6 +63,7 @@
                                   style="display: none;">
                                 @csrf
                             </form>
+
                         </div>
                     </li>
                 @endguest

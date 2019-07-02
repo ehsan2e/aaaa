@@ -60,6 +60,7 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'lock-screen' => \App\Http\Middleware\ProtectSession::class,
         'role.check' => \App\Http\Middleware\RoleCheck::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,

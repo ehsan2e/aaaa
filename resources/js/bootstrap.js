@@ -1,4 +1,4 @@
-window._ = require('lodash');
+//window._ = require('lodash');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -59,10 +59,107 @@ if (token) {
 // });
 
 
-
 /**
  * Nova codes start here
  */
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+(function ($) {
+    $.fn.uploader = function () {
+        return this.each(function () {
+            const $this = $(this);
+            const $file = $this.find('input[type=file]');
+            let config = $.extend({
+                bounded: 'yes',
+                confirmationTemplate: 'Are you sure you want to upload ||FILE||',
+                counter: 0,
+                name: 'attachments',
+                number: 1,
+                unknownError: 'Upload failed for an unknown reason'
+            }, $this.data());
+
+            config.bounded = config.bounded === 'yes';
+            config.number = parseInt(config.number);
+            if (isNaN(config.number)) {
+                config.number = 1
+            }
+            config.counter = parseInt(config.counter);
+            if (isNaN(config.counter)) {
+                config.counter = 0;
+            }
+            config.action = $this.closest('form').attr('action');
+            config.serial = config.counter + 1;
+            if ((config.bounded) && (config.counter >= config.number)) {
+                $file.prop('disabled', true);
+            }
+            $this.on('click', '[data-dismiss=alert]', function (event) {
+                config.counter--;
+                if (config.counter < config.number) {
+                    $file.prop('disabled', false);
+                }
+            });
+            $file.on('change', function (event) {
+                if (this.files.length === 0) {
+                    return;
+                }
+                if ((config.bounded) && (config.counter >= config.number)) {
+                    return;
+                }
+                $this.find('.errors-section').html('');
+                let [file] = this.files;
+                needsConfirmation(config.confirmationTemplate.replace('||FILE||', escapeHtml(file.name)), function () {
+                    config.counter++;
+                    config.serial++;
+                    if ((config.bounded) && (config.counter >= config.number)) {
+                        $file.prop('disabled', true);
+                    }
+                    let formData = new FormData();
+                    let serial = config.serial;
+                    $this.find('.files-section').append('<div class="alert alert-info" data-serial="' + serial + '"><span>' +
+                        escapeHtml(file.name) + '</span><input type="hidden" name="' + config.name + '[]' + '" value=""></div>');
+                    formData.append('file', file);
+                    let onError = function (msg) {
+                        config.counter--;
+                        if (config.counter < config.number) {
+                            $file.prop('disabled', false);
+                        }
+                        $this.find('.errors-section').html('<span class="text-danger">' + msg + '</span>');
+                        $this.find('.files-section').find('[data-serial=' + serial + ']').remove();
+
+                    };
+                    axios.post(config.action,
+                        formData,
+                        {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    )
+                        .then(function (response) {
+                            if (!response.data.claim_code) {
+                                onError(config.unknownError);
+                                return;
+                            }
+                            $this.find('.files-section [data-serial=' + serial + ']').removeClass('alert-info').addClass('alert-success')
+                                .append('<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>')
+                                .find('input[type=hidden]').val(response.data.claim_code);
+                        })
+                        .catch(function (error) {
+                            let data = error.response.data;
+                            onError((data.errors && data.errors.file) ? (data.errors.file[0]) : (data.message || config.unknownError));
+                        });
+                });
+            });
+        });
+    };
+})(jQuery);
 
 const tinymceBaseConfig = {
     plugins: 'print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template codesample table charmap hr pagebreak nonbreaking anchor toc insertdatetime advlist lists wordcount imagetools textpattern help',
@@ -110,7 +207,7 @@ const tinymceBaseConfig = {
     images_upload_url: 'postAcceptor.php'
 };
 
-window.initWYSIWYG = function (selector){
+window.initWYSIWYG = function (selector) {
     tinymce.init(Object.assign({}, tinymceBaseConfig, {selector: selector}));
 };
 
@@ -128,9 +225,9 @@ window.submitDataToUrl = function (url, data, method) {
             + '<input type="hidden" name="_method" value="' + method + '">';
     }
     form.setAttribute('action', url);
-    for(let item in data){
-        if(data.hasOwnProperty(item)){
-            html += '<input type="hidden" name="' + item +'" value="' + data[item] + '">';
+    for (let item in data) {
+        if (data.hasOwnProperty(item)) {
+            html += '<input type="hidden" name="' + item + '" value="' + data[item] + '">';
         }
     }
     form.innerHTML = html;
@@ -146,7 +243,10 @@ window.removeItem = function (url, message) {
 };
 
 (function (w, $) {
-    let $confirmationModal = $('#confirm-modal');
+    let $confirmationModal = $('#confirm-modal')
+    $confirmationModal.on('shown.bs.modal', function () {
+        $confirmationModal.find('#confirm-ok').focus();
+    });
     window.needsConfirmation = function (message, cb) {
         if ($confirmationModal.length === 0) {
             if (confirm(message)) {
@@ -169,6 +269,8 @@ window.removeItem = function (url, message) {
     $(function () {
         new window.ClipboardJS('.btn-copy');
         $(".chosen-select").chosen({disable_search_threshold: 10});
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.uploader').uploader();
     });
 })(window, window.jQuery);
 

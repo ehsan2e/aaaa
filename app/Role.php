@@ -15,6 +15,8 @@ class Role extends Model
     protected $parsedAbilities;
     protected $table = 'roles';
 
+    protected static $cache = [];
+
     protected function parseAbilities(): array
     {
         if (!isset($this->parsedAbilities)) {
@@ -33,8 +35,18 @@ class Role extends Model
 
     public function can(string $ability): bool
     {
-        $abilities = $this->parseAbilities();
-        return isset($abilities[$ability]);
+        if(!isset(self::$cache[$ability])){
+            self::$cache[$ability] = false;
+            $roleAbilities = $this->parseAbilities();
+            $legibleAbilities = Ability::getParentAbilities($ability, true);
+            foreach ($legibleAbilities as $legibleAbility){
+                if(isset($roleAbilities[$legibleAbility])){
+                    self::$cache[$ability] = true;
+                    break;
+                }
+            }
+        }
+        return self::$cache[$ability];
     }
 
     public function isA(int $type): bool

@@ -15,7 +15,12 @@ interface iPaginationGenerator
      */
     public function __construct(array $requestData, Builder $queryBuilder);
 
-    public function bindQueryParamFilter(string $paramName, $handler): iPaginationGenerator;
+    /**
+     * @param string $paramName
+     * @param null $handler
+     * @return iPaginationGenerator
+     */
+    public function bindQueryParamFilter(string $paramName, $handler=null): iPaginationGenerator;
 
     /**
      * @return string

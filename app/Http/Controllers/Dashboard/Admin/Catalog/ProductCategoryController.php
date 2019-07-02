@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard\Admin\Catalog;
 
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\ProductCategory;
 use App\Rules\AttributeSet;
 use App\Rules\AttributeSetLookupValue;
@@ -13,7 +13,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Unique;
 use function NovaVoip\sortedLanguages;
 
-class ProductCategoryController extends AbstarctAdminController
+class ProductCategoryController extends AbstractAdminController
 {
     /**
      * @var string

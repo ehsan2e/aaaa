@@ -55,6 +55,8 @@ class User extends Authenticatable
      */
     protected $userIsASupplier;
 
+    protected static $cache = [];
+
     /**
      * @param array $data
      * @return array
@@ -88,13 +90,17 @@ class User extends Authenticatable
      */
     public function isAble(string $ability): bool
     {
-        /** @var Role $role */
-        foreach ($this->roles as $role) {
-            if ($role->can($ability)) {
-                return true;
+        if(!isset(self::$cache[$ability])){
+            self::$cache[$ability] = false;
+            /** @var Role $role */
+            foreach ($this->roles as $role) {
+                if ($role->can($ability)) {
+                    self::$cache[$ability] = true;
+                    break;
+                }
             }
         }
-        return false;
+        return self::$cache[$ability];
     }
 
     /**

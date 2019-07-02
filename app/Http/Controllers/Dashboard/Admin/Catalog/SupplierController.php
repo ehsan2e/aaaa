@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Dashboard\Admin\Catalog;
 
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\Supplier;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class SupplierController extends AbstarctAdminController
+class SupplierController extends AbstractAdminController
 {
     /**
      * @var string

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Policies\TicketPolicy;
+use App\Ticket;
 use App\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
@@ -14,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
-        // 'App\Model' => 'App\Policies\ModelPolicy',
+         Ticket::class => TicketPolicy::class,
     ];
 
     /**
@@ -26,7 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         Gate::before(function(?User $user, $ability, $params){
-            if($user && ($user->isAble('all') || $user->isAble($ability))){
+            if($user && ($user->isAble($ability))){
                 return true;
             }
         });

@@ -1,5 +1,4 @@
 @csrf
-
 @if(count($languages) === 1)
     <input type="hidden" name="language" value="{{ key($languages) }}">
 @else

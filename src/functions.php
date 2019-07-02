@@ -26,7 +26,7 @@ function sortedLanguages(): array
  * @throws Exception
  * @throws SupervisedTransactionException
  */
-function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow = false, bool $silent = false, &$insight)
+function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow = false, bool $silent = false, &$insight = false)
 {
     try {
         $result = new \stdClass();
@@ -101,28 +101,31 @@ function extractTranslationFromObject($dictionary, bool $isBakend = false, strin
  * @param string|null $translationsKey
  * @param bool $isBakend
  * @param string $default
+ * @param callable|null $dictionaryGenerator
  * @return string
  */
-function translateEntity($entity, string $key = 'name', string $translationsKey = null, bool $isBakend = false, string $default = ''): string
+function translateEntity($entity, string $key = 'name', string $translationsKey = null, bool $isBakend = false, string $default = '', callable $dictionaryGenerator=null): string
 {
-    $translationsKey = $translationsKey ?? ($key . 'trnaslations');
+    $translationsKey = $translationsKey ?? ($key . '_translations');
     if (is_array($entity)) {
+        $dictionary = !isset($entity[$translationsKey]) ? [] : (isset($dictionaryGenerator) ? $dictionaryGenerator($entity[$translationsKey]) : $entity[$translationsKey]);
         if (!isset($entity[$translationsKey])) {
             return empty($entity[$key]) ? $default : $entity[$key];
-        } elseif (is_array($entity[$translationsKey])) {
-            return extractTranslationFromAssociativeArray($entity[$translationsKey], $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
-        } elseif (is_object($entity[$translationsKey])) {
-            return extractTranslationFromObject($entity[$translationsKey], $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
+        } elseif (is_array($dictionary)) {
+            return extractTranslationFromAssociativeArray($dictionary, $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
+        } elseif (is_object($dictionary)) {
+            return extractTranslationFromObject($dictionary, $isBakend, empty($entity[$key]) ? $default : $entity[$key]);
         } else {
             throw new \RuntimeException('Dictionary is not of valid type');
         }
     } elseif (is_object($entity)) {
+        $dictionary = !isset($entity->{$translationsKey}) ? [] : (isset($dictionaryGenerator) ? $dictionaryGenerator($entity->{$translationsKey}) : $entity->{$translationsKey});
         if (!isset($entity->{$translationsKey})) {
             return empty($entity->{$key}) ? $default : $entity->{$key};
-        } elseif (is_array($entity->{$translationsKey})) {
-            return extractTranslationFromAssociativeArray($entity->{$translationsKey}, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
-        } elseif (is_object($entity->{$translationsKey})) {
-            return extractTranslationFromObject($entity->{$translationsKey}, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
+        } elseif (is_array($dictionary)) {
+            return extractTranslationFromAssociativeArray($dictionary, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
+        } elseif (is_object($dictionary)) {
+            return extractTranslationFromObject($dictionary, $isBakend, empty($entity->{$key}) ? $default : $entity->{$key});
         } else {
             throw new \RuntimeException('Dictionary is not of valid type');
         }

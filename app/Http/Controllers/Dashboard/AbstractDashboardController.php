@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard\Admin;
-
+namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +8,7 @@ use Illuminate\Http\Request;
 use NovaVoip\Interfaces\iPaginationGenerator;
 use NovaVoip\Traits\SearchablePaginate;
 
-abstract class AbstarctAdminController extends Controller
+abstract class AbstractDashboardController extends Controller
 {
     use SearchablePaginate;
 
@@ -17,6 +16,16 @@ abstract class AbstarctAdminController extends Controller
      * @var string
      */
     protected $collectionName = 'collection';
+
+    /**
+     * @var callable|null
+     */
+    protected $customizeQuery = null;
+
+    /**
+     * @var string
+     */
+    protected $dashboardPrefix = 'dashboard';
 
     /**
      * @var array
@@ -27,7 +36,6 @@ abstract class AbstarctAdminController extends Controller
      * @var string|null
      */
     protected $viewBasePath;
-
     /**
      * @var string|null
      */
@@ -57,7 +65,7 @@ abstract class AbstarctAdminController extends Controller
      */
     protected function getPaginator(Request $request): iPaginationGenerator
     {
-        return $this->paginate($request, $this->getBuilder());
+        return $this->paginate($request, $this->customizeQuery ? call_user_func($this->customizeQuery, $this->getBuilder()) : $this->getBuilder());
     }
 
     /**
@@ -109,7 +117,7 @@ abstract class AbstarctAdminController extends Controller
     final public function index(Request $request)
     {
         $paginationGenerator = $this->getPaginator($request)
-            ->view(sprintf($this->viewPath ?? 'dashboard.admin.%s.index', $this->getViewBasePath()))
+            ->view(sprintf($this->viewPath ?? '%s.%s.index', $this->dashboardPrefix, $this->getViewBasePath()))
             ->setCollectionName($this->collectionName)
             ->setSearchableFields($this->getSearchableFields());
         return $this->prePaginationRender($paginationGenerator)->render($this->getIndexPageData());
@@ -123,6 +131,6 @@ abstract class AbstarctAdminController extends Controller
      */
     public function create()
     {
-        return $this->renderForm(sprintf($this->viewPath ?? 'dashboard.admin.%s.create', $this->getViewBasePath()));
+        return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.create', $this->dashboardPrefix, $this->getViewBasePath()));
     }
 }

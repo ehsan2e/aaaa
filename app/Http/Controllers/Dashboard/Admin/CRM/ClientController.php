@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Dashboard\Admin\CRM;
 
+use App\Ability;
 use App\Client;
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class ClientController extends AbstarctAdminController
+class ClientController extends AbstractAdminController
 {
     /**
      * @var string
@@ -107,5 +110,31 @@ class ClientController extends AbstarctAdminController
     public function update(Request $request, Client $client)
     {
         //
+    }
+
+    /**
+     * @param Request $request
+     * @param Client $client
+     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Auth\Access\AuthorizationException
+     */
+    public function loginAs(Request $request, Client $client)
+    {
+        $request->validate([
+            'password' => 'required',
+        ]);
+        $this->authorize(Ability::LOGIN_AS_CLIENT);
+        if(!$client->user_id){
+            flash()->error(__('Client does not have an account'));
+            return back();
+        }
+        if(!Hash::check($request->password, $client->user->password)){
+            flash()->error(__('Enter your password correctly'));
+            return back();
+        }
+        $adminId = Auth::id();
+        Auth::loginUsingId($client->user_id);
+        $request->session()->put('admin_id', $adminId);
+        return redirect()->route('dashboard.panel');
     }
 }

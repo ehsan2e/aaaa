@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Dashboard\Admin\CMS;
 
 use App\CustomUrl;
 use App\Facades\CustomUrlHandler;
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\Rules\JsonObjectString;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\QueryException;
@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class CustomUrlController extends AbstarctAdminController
+class CustomUrlController extends AbstractAdminController
 {
     /**
      * @var string

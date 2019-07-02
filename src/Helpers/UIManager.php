@@ -3,6 +3,8 @@
 namespace NovaVoip\Helpers;
 
 
+use Illuminate\Support\Facades\Auth;
+
 class UIManager
 {
     protected $activePath = [];
@@ -61,6 +63,19 @@ class UIManager
             }
         }
         return false;
+    }
+
+    /**
+     * @param array $menuConfig
+     * @return array
+     */
+    public function prepareMenu(array $menuConfig): array
+    {
+        if(Auth::user()->can('backend-admin')){
+            return $menuConfig;
+        }
+
+        dd($menuConfig);
     }
 
     /**

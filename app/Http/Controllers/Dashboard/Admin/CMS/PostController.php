@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard\Admin\CMS;
 
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\Post;
 use App\PostCategory;
 use App\Rules\ValidLanguage;
@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use function NovaVoip\sortedLanguages;
 
-class PostController extends AbstarctAdminController
+class PostController extends AbstractAdminController
 {
     /**
      * @var string

@@ -6,6 +6,7 @@
         'queryError' => $searchBoxConfig['queryError'] ?? null,
         'queryParamName' => $searchBoxConfig['queryParamName'] ?? 'q',
     ])
+    @slot('inlineFilters') {!! $searchBarInlineFilters ?? '' !!} @endslot
     {!! $searchBar ?? '' !!}
     @slot('extraControls') {{ $extraControls ?? '' }} @endslot
     @endcomponent

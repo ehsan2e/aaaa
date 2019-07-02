@@ -10,26 +10,24 @@ use NovaVoip\Interfaces\iPaginationGenerator;
 
 class PaginationGenerator implements iPaginationGenerator
 {
+    const CAST_BOOLEAN = 1;
+    const CAST_NULLABLE_BOOLEAN = 2;
     /**
      * @var string
      */
-    protected
-        $collectionName = 'collection';
+    protected $collectionName = 'collection';
     /**
      * @var array
      */
-    protected
-        $requestData;
+    protected $requestData;
     /**
      * @var Builder
      */
-    protected
-        $queryBuilder;
+    protected $queryBuilder;
     /**
      * @var string
      */
-    protected
-        $queryParamName = 'q';
+    protected $queryParamName = 'q';
     /**
      * @var array
      */
@@ -37,18 +35,15 @@ class PaginationGenerator implements iPaginationGenerator
     /**
      * @var bool
      */
-    protected
-        $rawQueryAllowed = false;
+    protected $rawQueryAllowed = false;
     /**
      * @var array
      */
-    protected
-        $searchableFields = [];
+    protected $searchableFields = [];
     /**
      * @var string
      */
-    protected
-        $viewName;
+    protected $viewName;
 
     /**
      *  constructor.
@@ -61,9 +56,14 @@ class PaginationGenerator implements iPaginationGenerator
         $this->queryBuilder = $queryBuilder;
     }
 
-    public function bindQueryParamFilter(string $paramName, $handler): iPaginationGenerator
+    /**
+     * @param string $paramName
+     * @param null $handler
+     * @return iPaginationGenerator
+     */
+    public function bindQueryParamFilter(string $paramName, $handler = null): iPaginationGenerator
     {
-        $this->queryParamFilters[$paramName] = $handler;
+        $this->queryParamFilters[$paramName] = $handler ?? $paramName;
         return $this;
     }
 
@@ -137,13 +137,47 @@ class PaginationGenerator implements iPaginationGenerator
                 }
             }
         }
-        if(count($this->queryParamFilters) > 0){
-            foreach ($this->queryParamFilters as $queryParam => $filter){
-                if(!isset($this->requestData[$queryParam])){
+        if (count($this->queryParamFilters) > 0) {
+            foreach ($this->queryParamFilters as $queryParam => $filter) {
+                if (is_array($filter)) {
+                    $filterConfig = $filter;
+                    $filter = $filterConfig['filter'] ?? $queryParam;
+                    $nullable = $filterConfig['nullable'] ?? false;
+                    $check = $filterConfig['check'] ?? '=';
+                    $format = $filterConfig['format'] ?? ($check === 'like' ? '%[[v]]%' : '[[v]]');
+                    $cast = $filterConfig['cast'] ?? null;
+                } else {
+                    $nullable = false;
+                    $check = '=';
+                    $format = '[[v]]';
+                    $cast = null;
+                }
+                if ((!array_key_exists($queryParam, $this->requestData)) || (is_null($this->requestData[$queryParam]) && (!$nullable))) {
                     continue;
                 }
-                if(is_scalar($filter)){
-                    $queryBuilder->where($filter, $this->requestData[$queryParam]);
+                $value = $this->requestData[$queryParam];
+                if (is_callable($cast)) {
+                    $value = $cast($value);
+                }
+                if (is_scalar($filter)) {
+                    if (is_null($value)) {
+                        $queryBuilder->whereNull($filter);
+                    } else if (is_scalar($value)) {
+                        $queryBuilder->where($filter, $check, str_replace('[[v]]', $value, $format));
+                    } elseif (is_array($value)) {
+                        if(in_array(null, $value, true)){
+                            $queryBuilder->where(function($query) use ($filter, $value){
+                                $query->whereNull($filter)->orWhereIn($filter, array_unique(array_filter($value, function($v){return isset($v);})));
+                            });
+                        }else{
+                            $queryBuilder->whereIn($filter, array_unique($value));
+                        }
+                    }
+
+                } elseif (is_callable($filter)) {
+                    $queryBuilder->where(function (Builder $query) use ($queryParam, $filter) {
+                        $filter($query, $this->requestData[$queryParam]);
+                    });
                 }
             }
         }
@@ -203,5 +237,34 @@ class PaginationGenerator implements iPaginationGenerator
     {
         $this->viewName = $view;
         return $this;
+    }
+
+
+    /**
+     * @param int $castType
+     * @return callable
+     */
+    public static function getCast(int $castType): callable
+    {
+        switch ($castType) {
+            case self::CAST_BOOLEAN:
+                return function($v){
+                    if(is_array($v)){
+                        return array_map(self::getCast(self::CAST_BOOLEAN), $v);
+                    }
+                    return (bool) $v;
+                };
+            case self::CAST_NULLABLE_BOOLEAN:
+                return function($v){
+                    if(is_array($v)){
+                        return array_map(self::getCast(self::CAST_NULLABLE_BOOLEAN), $v);
+                    }
+                    return is_null($v) ? $v : ((bool) $v);
+                };
+            default:
+                return function ($v) {
+                    return $v;
+                };
+        }
     }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Ability;
 use App\Role;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -14,6 +15,7 @@ class InitialData extends Seeder
      */
     public function run()
     {
+        $abilities = Ability::getAbilities();
         $adminRoleId = DB::table('roles')->insertGetId([
             'name' => 'Admin',
             'type' => Role::ROLE_ADMIN,
@@ -22,20 +24,20 @@ class InitialData extends Seeder
         ]);
         $allAbilityId = DB::table('abilities')->insertGetId([
             'code' => 'all',
-            'description' => __('All'),
+            'description' => $abilities['all'][0],
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
 
-        $abilities = [
-            'raw-query' => 'Run raw query in listing search boxes',
-        ];
         array_walk(
             $abilities,
-            function ($label, $code) {
+            function ($config, $code) {
+                if ($code === 'all') {
+                    return;
+                }
                 DB::table('abilities')->insertGetId([
                     'code' => $code,
-                    'description' => $label,
+                    'description' => $config[0],
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ]);

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Dashboard\Admin\Catalog;
 
-use App\Http\Controllers\Dashboard\Admin\AbstarctAdminController;
+use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\ProductCategory;
 use App\ProductType;
 use App\Rules\ExistingModel;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use NovaVoip\Interfaces\iPaginationGenerator;
 
-class ProductTypeController extends AbstarctAdminController
+class ProductTypeController extends AbstractAdminController
 {
     /**
      * @var string

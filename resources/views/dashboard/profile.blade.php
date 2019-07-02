@@ -8,7 +8,7 @@
                 <div class="card">
                     <div class="card-header">
                         <nav class="nav nav-pills flex-column flex-sm-row">
-                            <span class="text-sm-center">{{ __('Change Password') }}</span>
+                            <span class="text-sm-center">{{ __('Profile') }}</span>
                             <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.change-password') }}">{{ __('Change Password') }}</a></span>
                         </nav>
                     </div>
