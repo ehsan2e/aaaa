@@ -9,5 +9,7 @@
            href="{{ route('dashboard.admin.sales.tax-group.edit', ['tax_group' => $item]) }}">{{ __('Edit') }}</a>
         <a class="btn btn-sm btn-primary"
            href="{{ route('dashboard.admin.sales.tax-rule.index', ['tax_group' => $item]) }}">{{ __('Rules') }}</a>
+        <a class="btn btn-sm btn-primary"
+           href="{{ route('dashboard.admin.sales.tax-group.product-type.index', ['tax_group' => $item]) }}">{{ __('Product Types') }}</a>
     </td>
 </tr>

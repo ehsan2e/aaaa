@@ -24,7 +24,7 @@
                                 'queryParamName' => $queryParamName ?? 'q',
                             ],
                             'renderer' => 'dashboard.admin.catalog.product-type.list-renderer',
-                        ]){{ __('No post were found') }}@endcomponent
+                        ]){{ __('No product type were found') }}@endcomponent
                     </div>
                 </div>
             </div>

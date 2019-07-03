@@ -48,10 +48,7 @@ class ProductType extends Model
 
     public function getPriceAttribute()
     {
-        if ($this->promotion_price && $this->isOnPromotion()) {
-            return $this->promotion_price;
-        }
-        return $this->special_price ?? $this->original_price;
+        return self::calculatePrice($this);
     }
 
     public function category(): BelongsTo
@@ -104,10 +101,18 @@ class ProductType extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
-
     public function taxGroups(): BelongsToMany
     {
         return $this->belongsToMany(TaxGroup::class, 'product_type_tax_groups', 'product_type_id', 'tax_group_id', 'id', 'id');
+    }
+
+
+    public static function calculatePrice(Model $productType)
+    {
+        if ($productType->promotion_price && $productType->isOnPromotion()) {
+            return $productType->promotion_price;
+        }
+        return $productType->special_price ?? $productType->original_price;
     }
 
     /**

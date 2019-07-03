@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Dashboard\Admin\Sales;
 
 use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
+use App\ProductType;
+use App\ProductTypeTaxGroup;
 use App\TaxGroup;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use function NovaVoip\sortedLanguages;
@@ -107,5 +110,36 @@ class TaxGroupController extends AbstractAdminController
         }
         flash()->error($insight->message ?? __('An unknown error happened please try again later'));
         return back()->withInput();
+    }
+
+    /**
+     * @param Request $request
+     * @param TaxGroup $taxGroup
+     * @return \Illuminate\View\View
+     * @throws \ErrorException
+     */
+    public function productTypeIndex(Request $request, TaxGroup $taxGroup)
+    {
+        $queryBuilder = ProductTypeTaxGroup::join('product_types', 'product_types.id', '=', 'product_type_tax_groups.product_type_id')
+            ->leftJoin('product_categories', 'product_categories.id', '=', 'product_types.category_id')
+            ->leftJoin('suppliers', 'suppliers.id', '=', 'product_types.supplier_id')
+            ->select('product_types.*', 'product_type_tax_groups.id as product_type_tax_group_id', 'product_categories.code AS category_code', 'product_categories.name AS category_name', 'suppliers.name as supplier_name')
+            ->where('product_type_tax_groups.tax_group_id', $taxGroup->id);
+
+        $paginationGenerator = $this->paginate($request, $queryBuilder)
+            ->view(sprintf($this->viewPath ?? '%s.%s.product-type-index', $this->dashboardPrefix, $this->getViewBasePath()))
+            ->setCollectionName('productTypes')
+            ->setSearchableFields(['product_types.name', 'product_types.sku', 'product_types.supplier_sku', 'product_categories.name', 'suppliers.name'])
+            ->cast(ProductType::class);
+
+        return $this->prePaginationRender($paginationGenerator)->render(compact('taxGroup'));
+    }
+
+    public function productTypeTaxGroupDestroy(ProductTypeTaxGroup $productTypeTaxGroup)
+    {
+        $taxGroupId = $productTypeTaxGroup->tax_group_id;
+        $productTypeTaxGroup->delete();
+        flash()->success(__('Tax group removed from product'));
+        return redirect()->route('dashboard.admin.sales.tax-group.product-type.index', ['tax_group' => $taxGroupId]);
     }
 }

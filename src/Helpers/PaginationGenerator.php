@@ -3,6 +3,8 @@
 namespace NovaVoip\Helpers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\QueryException;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -12,6 +14,10 @@ class PaginationGenerator implements iPaginationGenerator
 {
     const CAST_BOOLEAN = 1;
     const CAST_NULLABLE_BOOLEAN = 2;
+    /**
+     * @var string
+     */
+    protected $castClass;
     /**
      * @var string
      */
@@ -64,6 +70,16 @@ class PaginationGenerator implements iPaginationGenerator
     public function bindQueryParamFilter(string $paramName, $handler = null): iPaginationGenerator
     {
         $this->queryParamFilters[$paramName] = $handler ?? $paramName;
+        return $this;
+    }
+
+    /**
+     * @param string $class
+     * @return iPaginationGenerator
+     */
+    public function cast(?string $class): iPaginationGenerator
+    {
+        $this->castClass = $class;
         return $this;
     }
 
@@ -183,7 +199,23 @@ class PaginationGenerator implements iPaginationGenerator
         }
         $queryError = null;
         try {
+            /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $collection */
             $collection = $queryBuilder->paginate();
+            if(isset($this->castClass)){
+                $newCollection = new Collection();
+                /** @var ProductTypeTaxGroup $originalModel */
+                foreach ($collection as $originalModel){
+                    /** @var Model $castedModel */
+                    $castedModel = new $this->castClass();
+                    $attributes = $originalModel->getAttributes();
+                    array_walk($attributes, function($value, $key) use ($castedModel){
+                        $castedModel->{$key} = $value;
+                    });
+                    $castedModel->syncOriginal();
+                    $newCollection->add($castedModel);
+                }
+                $collection = new LengthAwarePaginator($newCollection, $collection->total(), $collection->perPage(), $collection->currentPage(),$collection->getOptions());
+            }
             if (isset($q)) {
                 $collection->appends([$this->getQueryParamName() => $q]);
             }
@@ -229,6 +261,7 @@ class PaginationGenerator implements iPaginationGenerator
         return $this;
     }
 
+
     /**
      * @param string $view
      * @return iPaginationGenerator
@@ -238,7 +271,6 @@ class PaginationGenerator implements iPaginationGenerator
         $this->viewName = $view;
         return $this;
     }
-
 
     /**
      * @param int $castType

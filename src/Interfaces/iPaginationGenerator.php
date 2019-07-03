@@ -23,6 +23,12 @@ interface iPaginationGenerator
     public function bindQueryParamFilter(string $paramName, $handler=null): iPaginationGenerator;
 
     /**
+     * @param string $class
+     * @return iPaginationGenerator
+     */
+    public function cast(?string $class): iPaginationGenerator;
+
+    /**
      * @return string
      */
     public function getCollectionName(): string;

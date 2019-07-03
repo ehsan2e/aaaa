@@ -84,6 +84,11 @@ Route::prefix('dashboard')
                             Route::get('tax-group/{tax_group}/tax-rule', 'TaxRuleController@indexProxy')->name('tax-rule.index');
                             Route::get('tax-group/{tax_group}/tax-rule/create', 'TaxRuleController@createProxy')->name('tax-rule.create');
                             Route::resource('tax-group/{tax_group}/tax-rule', 'TaxRuleController', ['except' => ['index','create', 'show']]);
+
+                            Route::delete('product-type-tax-group/{product_type_tax_group}/destroy', 'TaxGroupController@productTypeTaxGroupDestroy')
+                                ->name('product-type-tax-group.destroy');
+                            Route::get('tax-group/{tax_group}/product-type', 'TaxGroupController@productTypeIndex')
+                                ->name('tax-group.product-type.index');
                             Route::resource('tax-group', 'TaxGroupController', ['except' => ['destroy', 'show']]);
                         });
 
