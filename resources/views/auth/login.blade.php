@@ -8,7 +8,7 @@
                     <div class="card-header">{{ __('Login') }}</div>
 
                     <div class="card-body">
-                        <form method="POST" action="{{ route('login') }}">
+                        <form method="POST" action="{{ route('login') }}" id="login-form">
                             @csrf
 
                             <div class="form-group row">
@@ -60,9 +60,7 @@
 
                             <div class="form-group row {{ !Route::has('register') ? 'mb0' : '' }}">
                                 <div class="col-md-8 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Login') }}
-                                    </button>
+                                    @component('layouts.partials.recaptcha', ['formId' => 'login-form']){{ __('Login') }}@endcomponent
 
                                     @if (Route::has('password.request'))
                                         <a class="btn btn-link" href="{{ route('password.request') }}">

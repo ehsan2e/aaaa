@@ -19,6 +19,9 @@
         <meta name="keywords" content="{{ $knowledgeBaseKeywords }}">
     @endif
     @include('layouts.partials.favicon')
+    @if(isset($usesRecaptcha))
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    @endif
 
     @yield('meta')
 
@@ -73,6 +76,7 @@
 </div>
 @include('layouts.partials.modals')
 <!-- Scripts -->
+@stack('before-scripts')
 <script src="{{ mix('js/manifest.js') }}"></script>
 <script src="{{ mix('js/vendor.js') }}"></script>
 <script src="{{ mix('js/app.js') }}"></script>

@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Facades\CustomUrlHandler;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 use NovaVoip\Helpers\CustomUrlHandler as CustomUrlHandlerRegistrar;
 use NovaVoip\Helpers\UIManager;
 
@@ -62,6 +64,13 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('endSomeError', function($expression){
             return '<?php endif; ?>';
         });
+
+        ViewFacade::composer(
+            ['auth.login', 'auth.register', 'auth.verify', 'auth.passwords.email', 'auth.passwords.reset'],
+            function(View $view){
+                $view->with('usesRecaptcha', true);
+            }
+        );
 
     }
 }
