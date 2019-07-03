@@ -12,14 +12,12 @@
                     </div>
 
                     <div class="card-body">
-                        <form action="" method="post">
+                        <form action="" method="post" id="unlock-screen-form">
                             @csrf
                             @component('dashboard.components.password', ['name' => 'password', 'required' => true, 'autofocus' => true]){{ __('Password') }}@endcomponent
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
-                                    <button type="submit" class="btn btn-primary">
-                                        {{ __('Unlock') }}
-                                    </button>
+                                    @component('layouts.partials.recaptcha', ['formId' => 'unlock-screen-form']){{ __('Unlock') }}@endcomponent
                                 </div>
                             </div>
                         </form>

@@ -17,6 +17,10 @@ class Recaptcha
      */
     public function handle($request, Closure $next)
     {
+        if(config('nova.ignore_recaptcha')){
+            return $next($request);
+        }
+
         if(!$request->has('g-recaptcha-response')){
             return abort(419);
         }

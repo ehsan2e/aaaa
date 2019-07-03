@@ -100,7 +100,7 @@ Route::prefix('dashboard')
         });
 
         Route::get('locked-screen', 'PanelController@lockedScreenForm')->name('locked-screen');
-        Route::post('locked-screen', 'PanelController@unlockScreen');
+        Route::post('locked-screen', 'PanelController@unlockScreen')->middleware('recaptcha');
 
     });
 

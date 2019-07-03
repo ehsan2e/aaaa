@@ -65,12 +65,14 @@ class AppServiceProvider extends ServiceProvider
             return '<?php endif; ?>';
         });
 
-        ViewFacade::composer(
-            ['auth.login', 'auth.register', 'auth.verify', 'auth.passwords.email', 'auth.passwords.reset'],
-            function(View $view){
-                $view->with('usesRecaptcha', true);
-            }
-        );
+        if(!config('nova.ignore_recaptcha')){
+            ViewFacade::composer(
+                ['auth.login', 'auth.register', 'auth.verify', 'auth.passwords.email', 'auth.passwords.reset', 'dashboard.locked-screen'],
+                function(View $view){
+                    $view->with('usesRecaptcha', true);
+                }
+            );
+        }
 
     }
 }
