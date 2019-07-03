@@ -1,3 +1,4 @@
+@php $rendererData = $rendererData ?? [] @endphp
 @if($hasSearchBox ?? true)
     @component('dashboard.components.search-list', [
         'canRunRawQuery' => $searchBoxConfig['canRunRawQuery'] ?? false,
@@ -18,7 +19,7 @@
     @endforeach
     <tbody>
     @forelse($collection as $item)
-        @component($renderer, compact('item'))@endcomponent
+        @component($renderer, compact('item') + $rendererData)@endcomponent
     @empty
         <tr>
             <td class="text-center" colspan="{{ count($columnTitles) }}">{!! $slot !!}</td>

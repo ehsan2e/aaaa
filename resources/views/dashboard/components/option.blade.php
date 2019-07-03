@@ -4,7 +4,8 @@
 @endphp
 @switch($type)
     @case('select-option')
-    <option value="{{ $value ?? '' }}" @if($value == ($selectedValue ?? '')) selected @endif>{{  $slot }}</option>
+    @php $selectedValue = $selectedValue ?? '' @endphp
+    <option value="{{ $value ?? '' }}" @if((is_scalar($value) && ($value == $selectedValue)) || (is_array($selectedValue) && in_array($value, $selectedValue))) selected @endif>{{  $slot }}</option>
     @break
     @case('multi-choice')
     @if($inline)

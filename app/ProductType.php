@@ -5,6 +5,7 @@ namespace App;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use NovaVoip\Exceptions\SupervisedTransactionException;
 use function NovaVoip\supervisedTransaction;
 use NovaVoip\Traits\FieldLevelAccessControl;
@@ -25,19 +26,22 @@ class ProductType extends Model
         'custom_attributes' => 'array',
     ];
     protected $dates = ['promotion_starts_at', 'promotion_ends_at'];
+
     /**
      * @return array
      */
     protected function modelRelations(): array
     {
         return [
-            'category' => ['category_id', false],
-            'supplier' => ['supplier_id', false],
+            'category' => ['category_id', false, BelongsTo::class],
+            'supplier' => ['supplier_id', false, BelongsTo::class],
+            'taxGroups' => ['tax_groups', false, BelongsToMany::class],
         ];
     }
+
     protected $fillable = [
         'name', 'description', 'picture', 'cost', 'original_price', 'special_price', 'supplier_sku', 'supplier_share', 'promotion_price', 'promotion_starts_at', 'promotion_ends_at', 'custom_attributes',
-        'active','on_sale','stock_less','allow_back_order','show_out_of_stock','in_promotion', 'imposes_pre_invoice_negotiation'
+        'active', 'on_sale', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation'
     ];
 
     protected $table = 'product_types';
@@ -100,22 +104,38 @@ class ProductType extends Model
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
     }
 
+
+    public function taxGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(TaxGroup::class, 'product_type_tax_groups', 'product_type_id', 'tax_group_id', 'id', 'id');
+    }
+
     /**
      * @param User $creator
      * @param array $data
      * @return ProductType|null
+     * @throws SupervisedTransactionException
+     * @throws \Exception
      */
     public static function createNewProductType(User $creator, array $data): ?ProductType
     {
-        $instance = new self($data);
-        $instance->sku = $data['sku'];
-        $booleanFields = $instance->getBooleanFields();
-        array_walk($booleanFields, function ($name) use ($data, $instance) {
-            $instance->{$name} = isset($data[$name]);
-        });
-        $instance->category_id = $data['category_id'] ?? null;
-        $instance->supplier_id = $data['supplier_id'] ?? null;
-        $instance->creator()->associate($creator);
-        return $instance->save() ? $instance : null;
+        return supervisedTransaction(function () use ($creator, $data): ?ProductType {
+            $instance = new self($data);
+            $instance->sku = $data['sku'];
+            $booleanFields = $instance->getBooleanFields();
+            array_walk($booleanFields, function ($name) use ($data, $instance) {
+                $instance->{$name} = isset($data[$name]);
+            });
+            $instance->category_id = $data['category_id'] ?? null;
+            $instance->supplier_id = $data['supplier_id'] ?? null;
+            $instance->creator()->associate($creator);
+            if (!$instance->save()) {
+                return null;
+            }
+            if (isset($data['tax_groups'])) {
+                $instance->taxGroups()->sync($data['tax_groups']);
+            }
+            return $instance;
+        }, null, false, false);
     }
 }

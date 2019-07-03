@@ -129,7 +129,7 @@ return [
     [
         'label' => __('Sales'),
         'icon' => null,
-        'identifier' => '',
+        'identifier' => 'sales',
         'href' => '#',
         'ability' => null,
         'children' => [
@@ -154,6 +154,14 @@ return [
                 'icon' => null,
                 'identifier' => '',
                 'href' => '#',
+                'ability' => null,
+                'children' => [],
+            ],
+            [
+                'label' => __('Tax'),
+                'icon' => null,
+                'identifier' => 'tax-group',
+                'href' => route('dashboard.admin.sales.tax-group.index'),
                 'ability' => null,
                 'children' => [],
             ],

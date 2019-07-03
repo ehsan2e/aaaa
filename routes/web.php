@@ -77,6 +77,16 @@ Route::prefix('dashboard')
                             Route::resource('post-category', 'PostCategoryController', ['except' => ['show', 'destroy']]);
                         });
 
+                    Route::prefix('sales')
+                        ->namespace('Sales')
+                        ->name('sales.')
+                        ->group(function () {
+                            Route::get('tax-group/{tax_group}/tax-rule', 'TaxRuleController@indexProxy')->name('tax-rule.index');
+                            Route::get('tax-group/{tax_group}/tax-rule/create', 'TaxRuleController@createProxy')->name('tax-rule.create');
+                            Route::resource('tax-group/{tax_group}/tax-rule', 'TaxRuleController', ['except' => ['index','create', 'show']]);
+                            Route::resource('tax-group', 'TaxGroupController', ['except' => ['destroy', 'show']]);
+                        });
+
                     Route::get('gallery', 'MediaController@gallery')
                         ->name('gallery.index');
 

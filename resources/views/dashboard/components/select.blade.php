@@ -4,11 +4,12 @@
     if(isset($valueParser)){
         $value = $valueParser($value);
     }
+    $multiple = $multiple ?? false;
 @endphp
 <div class="form-group row">
     <label for="{{ $name }}" class="col-md-4 col-form-label text-md-right">{!! $slot !!}</label>
     <div class="col-md-6">
-        <select id="{{ $name }}" name="{{ $name }}"
+        <select id="{{ $name }}" name="{{ $name . ($multiple ? '[]' : '') }}" @if($multiple) multiple @endif
                 class="form-control @unless($bypassChosen ?? false) chosen-select @endunless @error($oldName) is-invalid @enderror"
                 autocomplete="{{ $name }}"
                 @if($autofocus ?? false) autofocus @endif

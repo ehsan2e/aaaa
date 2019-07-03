@@ -7,6 +7,7 @@ use App\ProductCategory;
 use App\ProductType;
 use App\Rules\ExistingModel;
 use App\Supplier;
+use App\TaxGroup;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -53,7 +54,8 @@ class ProductTypeController extends AbstractAdminController
     protected function renderForm(string $view, array $data = [])
     {
         $suppliers = Supplier::select('id', 'name')->orderBy('name')->get();
-        return parent::renderForm($view, compact('suppliers') + $data);
+        $taxGroups = TaxGroup::where('active', true)->get();
+        return parent::renderForm($view, compact('suppliers', 'taxGroups') + $data);
     }
 
     protected function prePaginationRender(iPaginationGenerator $paginationGenerator): iPaginationGenerator
@@ -106,6 +108,7 @@ class ProductTypeController extends AbstractAdminController
             'original_price' => ['required', 'numeric'],
             'special_price' => ['nullable', 'numeric'],
             'cost' => ['nullable', 'numeric'],
+            'tax_groups' => ['nullable', 'array'],
             'stock_less' => ['boolean'],
             'allow_back_order' => ['boolean'],
             'show_out_of_stock' => ['boolean'],
@@ -114,6 +117,7 @@ class ProductTypeController extends AbstractAdminController
             'promotion_starts_at' => ['nullable', 'date'],
             'promotion_ends_at' => ['nullable', 'date'],
         ];
+        $data['tax_groups'] = $data['tax_groups'] ?? [];
         if(isset($data['category_id'])){
             /** @var ProductCategory $productCategory */
            $productCategory = ProductCategory::find($data['category_id']);
@@ -142,6 +146,7 @@ class ProductTypeController extends AbstractAdminController
     public function edit(ProductType $productType)
     {
         $productCategory = $productType->category;
+        $productType->load(['taxGroups']);
         return $this->renderForm('dashboard.admin.catalog.product-type.edit', compact('productType', 'productCategory'));
     }
 
@@ -151,6 +156,8 @@ class ProductTypeController extends AbstractAdminController
      * @param  \Illuminate\Http\Request $request
      * @param  \App\ProductType $productType
      * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
      */
     public function update(Request $request, ProductType $productType)
     {
@@ -169,17 +176,21 @@ class ProductTypeController extends AbstractAdminController
             'original_price' => ['required', 'numeric'],
             'special_price' => ['nullable', 'numeric'],
             'cost' => ['nullable', 'numeric'],
+            'tax_groups' => ['nullable', 'array'],
             'stock_less' => ['boolean'],
             'allow_back_order' => ['boolean'],
             'show_out_of_stock' => ['boolean'],
-            'promotion_price' => ['required_with:in_promotion,promotion_starts_at,promotion_ends_at', 'nullable', 'numeric'],
             'in_promotion' => ['boolean'],
             'promotion_starts_at' => ['nullable', 'date'],
             'promotion_ends_at' => ['nullable', 'date'],
         ];
 
         $v = Validator::make($partialData, Arr::only($rules, array_keys($partialData)));
+        $v->sometimes('promotion_price', 'required|numeric', function($input){
+            return (isset($input->in_promotion) && $input->in_promotion) || isset($input->promotion_starts_at) || isset($input->promotion_ends_at);
+        });
         if ($v->fails()) {
+            dd($v, $partialData);
             return back()->withInput()->withErrors($v);
         }
 

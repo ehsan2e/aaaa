@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class CountryAndProvinces extends Seeder
 {
@@ -11,10 +13,11 @@ class CountryAndProvinces extends Seeder
      */
     public function run()
     {
-        \Illuminate\Support\Facades\DB::table('provinces')->delete();
-        \Illuminate\Support\Facades\DB::table('countries')->delete();
+        Schema::disableForeignKeyConstraints();
+        DB::table('countries')->truncate();
+        DB::table('provinces')->truncate();
 
-        \Illuminate\Support\Facades\DB::table('countries')->insert([
+        DB::table('countries')->insert([
             [
                 'code' => 'ca',
                 'name' => 'Canada',
@@ -27,7 +30,7 @@ class CountryAndProvinces extends Seeder
 //            ]
         ]);
 
-        \Illuminate\Support\Facades\DB::table('provinces')->insert([
+        DB::table('provinces')->insert([
             [
                 'code' => 'ca-ab',
                 'country_code' => 'ca',
@@ -107,5 +110,7 @@ class CountryAndProvinces extends Seeder
                 'name_translations' => json_encode(['fr' => 'Yukon']),
             ],
         ]);
+
+        Schema::enableForeignKeyConstraints();
     }
 }

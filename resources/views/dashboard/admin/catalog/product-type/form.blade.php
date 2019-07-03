@@ -73,6 +73,14 @@
                 @component('dashboard.components.input-box', ['name' => 'original_price', 'model' => $productType ?? null]){{ __('Original Price') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'special_price', 'model' => $productType ?? null]){{ __('Special Price') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'cost', 'model' => $productType ?? null]){{ __('Cost') }}@endcomponent
+                @component('dashboard.components.select', ['name' => 'tax_groups', 'model' => $productType ?? null, 'multiple' => true, 'modelKey' => 'taxGroups', 'valueParser' => function($data){ return is_a($data, \Illuminate\Support\Collection::class) ? $data->pluck('id')->toArray() : (is_array($data) ? $data : []);}])
+                    @slot('options')
+                        @foreach($taxGroups as $taxGroup)
+                            @component('dashboard.components.option', ['value'=>$taxGroup->id, 'selectedValue' => old('tax_groups', isset($productType->taxGroups) ? ($productType->taxGroups->pluck('id')->toArray()) : [])]){{ \NovaVoip\translateEntity($taxGroup) }}@endcomponent
+                        @endforeach
+                    @endslot
+                    {{ __('Supplier') }}
+                @endcomponent
             </div>
             <div class="tab-pane fade" id="product-inventory" role="tabpanel"
                  aria-labelledby="product-inventory-tab">
