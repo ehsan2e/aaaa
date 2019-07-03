@@ -50,6 +50,7 @@
                 @component('dashboard.components.textarea', ['name' => 'description', 'model' => $productType ?? null]){{ __('Description') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'picture', 'model' => $productType ?? null]){{ __('Picture') }}@endcomponent
                 @component('dashboard.components.check-box', ['name' => 'active', 'model' => $productType ?? null]){{ __('Active') }}@endcomponent
+                @component('dashboard.components.check-box', ['name' => 'imposes_pre_invoice_negotiation', 'model' => $productType ?? null]){{ __('Impose Pre Invoice negotiation') }}@endcomponent
                 @component('dashboard.components.check-box', ['name' => 'on_sale', 'model' => $productType ?? null]){{ __('On Sale') }}@endcomponent
             </div>
             <div class="tab-pane fade" id="product-supplier" role="tabpanel"

@@ -48,13 +48,13 @@ class InitialData extends Seeder
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-        $clientRoleId = DB::table('roles')->insertGetId([
+        DB::table('roles')->insertGetId([
             'name' => 'Client',
             'type' => Role::ROLE_CLIENT,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
-        $supplierRole = DB::table('roles')->insertGetId([
+        DB::table('roles')->insertGetId([
             'name' => 'Supplier',
             'type' => Role::ROLE_SUPPLIER,
             'created_at' => Carbon::now(),
@@ -77,54 +77,6 @@ class InitialData extends Seeder
                 'updated_at' => Carbon::now(),
             ]);
         });
-
-
-        DB::transaction(function () use ($clientRoleId) {
-            $testUserId = DB::table('users')->insertGetId([
-                'name' => 'Test',
-                'email' => 'test@example.com',
-                'password' => bcrypt('123456'),
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-            DB::table('user_roles')->insert([
-                'role_id' => $clientRoleId,
-                'user_id' => $testUserId,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-            DB::table('clients')->insert([
-                'user_id' => $testUserId,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ]);
-        });
-
-        array_map(function ($name) use ($supplierRole) {
-            DB::transaction(function () use ($name, $supplierRole) {
-                if ($name === 'Sitak') {
-                    $supplierId = DB::table('users')->insertGetId([
-                        'name' => $name,
-                        'email' => \Illuminate\Support\Str::snake($name) . '@example.com',
-                        'password' => bcrypt('123456'),
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    ]);
-                    DB::table('user_roles')->insert([
-                        'role_id' => $supplierRole,
-                        'user_id' => $supplierId,
-                        'created_at' => Carbon::now(),
-                        'updated_at' => Carbon::now(),
-                    ]);
-                }
-                DB::table('suppliers')->insert([
-                    'name' => $name,
-                    'user_id' => $supplierId ?? null,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ]);
-            });
-        }, ['Nova', 'Sitak', 'Digital Ocean']);
 
         DB::table('product_categories')->insert([
             'code' => config('nova.box_category_code'),
@@ -318,7 +270,28 @@ class InitialData extends Seeder
             'name' => 'Box Service',
             'active' => true,
             'custom_attributes' => json_encode([
-
+                [
+                    'caption' => 'Mandatory',
+                    'captions' => [
+                        'backend' => '',
+                        'en' => '',
+                    ],
+                    'lookupValues' => [],
+                    'name' => 'mandatory',
+                    'required' => false,
+                    'type' => 'boolean',
+                ],
+                [
+                    'caption' => 'Pre Include',
+                    'captions' => [
+                        'backend' => '',
+                        'en' => '',
+                    ],
+                    'lookupValues' => [],
+                    'name' => 'pre_include',
+                    'required' => false,
+                    'type' => 'boolean',
+                ],
             ]),
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

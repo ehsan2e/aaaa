@@ -29,6 +29,7 @@ class TicketFollower extends Pivot
     ];
     protected $fillable = ['concern', 'following', 'interactions', 'updated_at'];
     protected $table = 'ticket_followers';
+    public $timestamps = false;
 
 
     public function getTicketNumberAttribute()

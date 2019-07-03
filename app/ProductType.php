@@ -21,6 +21,7 @@ class ProductType extends Model
         'allow_back_order' => 'boolean',
         'show_out_of_stock' => 'boolean',
         'in_promotion' => 'boolean',
+        'imposes_pre_invoice_negotiation' => 'boolean',
         'custom_attributes' => 'array',
     ];
     protected $dates = ['promotion_starts_at', 'promotion_ends_at'];
@@ -36,7 +37,7 @@ class ProductType extends Model
     }
     protected $fillable = [
         'name', 'description', 'picture', 'cost', 'original_price', 'special_price', 'supplier_sku', 'supplier_share', 'promotion_price', 'promotion_starts_at', 'promotion_ends_at', 'custom_attributes',
-        'active','on_sale','stock_less','allow_back_order','show_out_of_stock','in_promotion'
+        'active','on_sale','stock_less','allow_back_order','show_out_of_stock','in_promotion', 'imposes_pre_invoice_negotiation'
     ];
 
     protected $table = 'product_types';
