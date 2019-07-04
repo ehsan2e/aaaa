@@ -23,6 +23,7 @@
                                 'placeholder' => __('Search Post'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
                             'renderer' => 'dashboard.admin.cms.post.list-renderer',
                         ]){{ __('No post were found') }}@endcomponent

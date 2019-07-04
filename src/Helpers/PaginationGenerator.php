@@ -23,9 +23,9 @@ class PaginationGenerator implements iPaginationGenerator
      */
     protected $collectionName = 'collection';
     /**
-     * @var array
+     * @var int
      */
-    protected $requestData;
+    protected $perPage = 15;
     /**
      * @var Builder
      */
@@ -45,7 +45,20 @@ class PaginationGenerator implements iPaginationGenerator
     /**
      * @var array
      */
+    protected $requestData;
+    /**
+     * @var array
+     */
     protected $searchableFields = [];
+    /**
+     * @var array
+     */
+    protected $sorting = [
+        'orderByParam' => 'order_by',
+        'sortConfig' => [],
+        'sortDirectionParam' => 'sort_direction',
+        'sortConfigVariable' => 'sortConfig',
+    ];
     /**
      * @var string
      */
@@ -55,19 +68,24 @@ class PaginationGenerator implements iPaginationGenerator
      *  constructor.
      * @param array $requestData
      * @param Builder $queryBuilder
+     * @param int|null $perPage
      */
-    public function __construct(array $requestData, Builder $queryBuilder)
+    public function __construct(array $requestData, Builder $queryBuilder, int $perPage = null)
     {
         $this->requestData = $requestData;
         $this->queryBuilder = $queryBuilder;
+        if (isset($perPage)) {
+            $this->perPage = $perPage;
+        }
     }
 
     /**
      * @param string $paramName
      * @param null $handler
+     * @param string|null $field
      * @return iPaginationGenerator
      */
-    public function bindQueryParamFilter(string $paramName, $handler = null): iPaginationGenerator
+    public function bindQueryParamFilter(string $paramName, $handler = null, string $field=null): iPaginationGenerator
     {
         $this->queryParamFilters[$paramName] = $handler ?? $paramName;
         return $this;
@@ -181,11 +199,13 @@ class PaginationGenerator implements iPaginationGenerator
                     } else if (is_scalar($value)) {
                         $queryBuilder->where($filter, $check, str_replace('[[v]]', $value, $format));
                     } elseif (is_array($value)) {
-                        if(in_array(null, $value, true)){
-                            $queryBuilder->where(function($query) use ($filter, $value){
-                                $query->whereNull($filter)->orWhereIn($filter, array_unique(array_filter($value, function($v){return isset($v);})));
+                        if (in_array(null, $value, true)) {
+                            $queryBuilder->where(function ($query) use ($filter, $value) {
+                                $query->whereNull($filter)->orWhereIn($filter, array_unique(array_filter($value, function ($v) {
+                                    return isset($v);
+                                })));
                             });
-                        }else{
+                        } else {
                             $queryBuilder->whereIn($filter, array_unique($value));
                         }
                     }
@@ -197,28 +217,50 @@ class PaginationGenerator implements iPaginationGenerator
                 }
             }
         }
+
+        // Set query order if applicable
+        $orderBy = $this->resolveOrderBy();
+        $sortDirection = $this->resolveSortDirection();
+        if ($orderBy !== -1) {
+            $this->requestData[$this->sorting['orderByParam']] = $orderBy;
+            $this->requestData[$this->sorting['sortDirectionParam']] = $sortDirection;
+            list($dummy, $sortHandle) = $this->sorting['sortConfig'][$orderBy];
+            if (is_callable($sortHandle)) {
+                $sortHandle($queryBuilder, $sortDirection);
+            } else {
+                $queryBuilder->orderBy($sortHandle, $sortDirection);
+            }
+        }
+
+
         $queryError = null;
         try {
             /** @var \Illuminate\Contracts\Pagination\LengthAwarePaginator $collection */
-            $collection = $queryBuilder->paginate();
-            if(isset($this->castClass)){
+            $collection = $queryBuilder->paginate($this->perPage);
+            if (isset($this->castClass)) {
                 $newCollection = new Collection();
                 /** @var ProductTypeTaxGroup $originalModel */
-                foreach ($collection as $originalModel){
+                foreach ($collection as $originalModel) {
                     /** @var Model $castedModel */
                     $castedModel = new $this->castClass();
                     $attributes = $originalModel->getAttributes();
-                    array_walk($attributes, function($value, $key) use ($castedModel){
+                    array_walk($attributes, function ($value, $key) use ($castedModel) {
                         $castedModel->{$key} = $value;
                     });
                     $castedModel->syncOriginal();
                     $newCollection->add($castedModel);
                 }
-                $collection = new LengthAwarePaginator($newCollection, $collection->total(), $collection->perPage(), $collection->currentPage(),$collection->getOptions());
+                $collection = new LengthAwarePaginator($newCollection, $collection->total(), $collection->perPage(), $collection->currentPage(), $collection->getOptions());
             }
+            $appendedData = [];
             if (isset($q)) {
-                $collection->appends([$this->getQueryParamName() => $q]);
+                $appendedData[$this->getQueryParamName()] = $q;
             }
+            if ($orderBy !== -1) {
+                $appendedData[$this->sorting['orderByParam']] = $orderBy;
+                $appendedData[$this->sorting['sortDirectionParam']] = $sortDirection;
+            }
+            $collection->appends($appendedData);
         } catch (QueryException $queryException) {
             $queryError = $queryException->getMessage();
             $collection = new LengthAwarePaginator([], 0, 15);
@@ -228,7 +270,34 @@ class PaginationGenerator implements iPaginationGenerator
                 'canRunRawQuery' => $this->rawQueryAllowed,
                 'queryError' => $queryError,
                 'queryParamName' => $this->getQueryParamName(),
+                $this->sorting['sortConfigVariable'] => [
+                    'options' => array_map(function ($item) {
+                        return $item[0];
+                    }, $this->sorting['sortConfig']),
+                    'orderBy' => $orderBy,
+                    'orderByParam' => $this->sorting['orderByParam'],
+                    'sortDirection' => $sortDirection,
+                    'sortDirectionParam' => $this->sorting['sortDirectionParam'],
+                ]
             ] + $data);
+    }
+
+    /**
+     * @return int
+     */
+    protected function resolveOrderBy(): int
+    {
+        $requestedOrder = (int)($this->requestData[$this->sorting['orderByParam']] ?? '0');
+        return isset($this->sorting['sortConfig'][$requestedOrder]) ? $requestedOrder : ((count($this->sorting['sortConfig']) === 0) ? -1 : 0);
+    }
+
+    /**
+     * @return string
+     */
+    protected function resolveSortDirection(): string
+    {
+        $requestedSortDirection = $this->requestData[$this->sorting['sortDirectionParam']] ?? iPaginationGenerator::SORT_ASC;
+        return in_array($requestedSortDirection, [iPaginationGenerator::SORT_ASC, iPaginationGenerator::SORT_DESC]) ? $requestedSortDirection : iPaginationGenerator::SORT_ASC;
     }
 
     /**
@@ -242,12 +311,36 @@ class PaginationGenerator implements iPaginationGenerator
     }
 
     /**
+     * @param array $sortConfig
+     * @param string $orderByParam
+     * @param string $sortDirectionParam
+     * @param string $sortConfigVariable
+     * @return iPaginationGenerator
+     */
+    public function setOrder(array $sortConfig, string $orderByParam='order_by', string $sortDirectionParam = 'sort_direction', string $sortConfigVariable = 'sortConfig'): iPaginationGenerator
+    {
+        $this->sorting = compact('sortConfig', 'orderByParam', 'sortDirectionParam', 'sortConfigVariable');
+        return $this;
+    }
+
+    /**
      * @param string $queryParamName
      * @return iPaginationGenerator
      */
     public function setQueryParamName(string $queryParamName): iPaginationGenerator
     {
         $this->queryParamName = $queryParamName;
+        return $this;
+    }
+
+
+    /**
+     * @param int $number
+     * @return iPaginationGenerator
+     */
+    public function setRecordsPerPage(int $number): iPaginationGenerator
+    {
+        $this->perPage = $number;
         return $this;
     }
 
@@ -260,7 +353,6 @@ class PaginationGenerator implements iPaginationGenerator
         $this->searchableFields = $searchableFields;
         return $this;
     }
-
 
     /**
      * @param string $view
@@ -280,18 +372,18 @@ class PaginationGenerator implements iPaginationGenerator
     {
         switch ($castType) {
             case self::CAST_BOOLEAN:
-                return function($v){
-                    if(is_array($v)){
+                return function ($v) {
+                    if (is_array($v)) {
                         return array_map(self::getCast(self::CAST_BOOLEAN), $v);
                     }
-                    return (bool) $v;
+                    return (bool)$v;
                 };
             case self::CAST_NULLABLE_BOOLEAN:
-                return function($v){
-                    if(is_array($v)){
+                return function ($v) {
+                    if (is_array($v)) {
                         return array_map(self::getCast(self::CAST_NULLABLE_BOOLEAN), $v);
                     }
-                    return is_null($v) ? $v : ((bool) $v);
+                    return is_null($v) ? $v : ((bool)$v);
                 };
             default:
                 return function ($v) {

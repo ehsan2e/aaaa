@@ -24,6 +24,7 @@
                                 'placeholder' => __('Search Client'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
                             'renderer' => 'dashboard.admin.crm.client.list-renderer',
                         ]){{ __('No client were found') }}@endcomponent

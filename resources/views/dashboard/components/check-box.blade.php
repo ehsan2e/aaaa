@@ -1,6 +1,6 @@
 @php
     $oldName = str_replace(['[', ']'], ['.', ''], $name);
-    $checked = old($oldName, (isset($model) ? (is_array($model) ? $model[$modelKey ?? $name] : $model->{$modelKey ?? $name}) : null) ?? (is_null(old('_token')) ? ($default ?? false) : false));
+    $checked = old($oldName, (isset($model) ? (is_array($model) ? ($model[$modelKey ?? $name] ?? false) : ($model->{$modelKey ?? $name} ?? false)) : null) ?? (is_null(old('_token')) ? ($default ?? false) : false));
     if(isset($checkedParser)){
         $value = $checkedParser($checked);
     }

@@ -8,19 +8,24 @@ use Illuminate\View\View;
 
 interface iPaginationGenerator
 {
+    const SORT_ASC = 'asc';
+    const SORT_DESC = 'desc';
+
     /**
      *  constructor.
      * @param array $requestData
      * @param Builder $queryBuilder
+     * @param int|null $perPage
      */
-    public function __construct(array $requestData, Builder $queryBuilder);
+    public function __construct(array $requestData, Builder $queryBuilder, int $perPage = null);
 
     /**
      * @param string $paramName
      * @param null $handler
+     * @param string|null $field
      * @return iPaginationGenerator
      */
-    public function bindQueryParamFilter(string $paramName, $handler=null): iPaginationGenerator;
+    public function bindQueryParamFilter(string $paramName, $handler = null, string $field=null): iPaginationGenerator;
 
     /**
      * @param string $class
@@ -60,6 +65,21 @@ interface iPaginationGenerator
      * @return iPaginationGenerator
      */
     public function setCollectionName(string $collectionName): iPaginationGenerator;
+
+    /**
+     * @param array $sortConfig
+     * @param string $orderByParam
+     * @param string $sortDirectionParam
+     * @param string $sortConfigVariable
+     * @return iPaginationGenerator
+     */
+    public function setOrder(array $sortConfig, string $orderByParam, string $sortDirectionParam, string $sortConfigVariable): iPaginationGenerator;
+
+    /**
+     * @param int $number
+     * @return iPaginationGenerator
+     */
+    public function setRecordsPerPage(int $number): iPaginationGenerator;
 
     /**
      * @param string $queryParamName

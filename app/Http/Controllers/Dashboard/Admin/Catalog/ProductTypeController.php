@@ -14,6 +14,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use NovaVoip\Helpers\PaginationGenerator;
 use NovaVoip\Interfaces\iPaginationGenerator;
 
 class ProductTypeController extends AbstractAdminController
@@ -26,7 +27,7 @@ class ProductTypeController extends AbstractAdminController
     /**
      * @var array
      */
-    protected $searchableFields = ['product_types.sku', 'product_types.name', 'product_types.supplier_sku', 'product_categories.name', 'suppliers.name'];
+    protected $searchableFields = ['product_types.sku', 'product_types.name', 'product_types.supplier_sku', 'product_categories.name', 'product_categories.code', 'suppliers.name'];
 
     /**
      * @var string
@@ -46,6 +47,29 @@ class ProductTypeController extends AbstractAdminController
             ->select(['product_types.*', 'product_categories.code AS category_code', 'product_categories.name AS category_name', 'c.name as creator_name', 'e.name as editor_name', 'suppliers.name as supplier_name']);
     }
 
+    protected function getIndexPageData(): array
+    {
+        return [
+            'productCategories' => ProductCategory::select('id', 'name')->orderBy('name')->get()
+        ];
+    }
+
+    protected function getSortableFields(): array
+    {
+        return [
+            [__('ID'), 'product_types.id'],
+            [__('Name'), 'product_types.name'],
+            [__('Category'), 'product_categories.name'],
+            [__('Supplier'), 'suppliers.name'],
+        ];
+    }
+
+    protected function prePaginationRender(iPaginationGenerator $paginationGenerator): iPaginationGenerator
+    {
+        return $paginationGenerator->bindQueryParamFilter('category', 'product_types.category_id')
+            ->bindQueryParamFilter('active', ['filter' => 'product_types.active', 'cast' => PaginationGenerator::getCast(PaginationGenerator::CAST_BOOLEAN)]);
+    }
+
     /**
      * @param string $view
      * @param array $data
@@ -56,12 +80,6 @@ class ProductTypeController extends AbstractAdminController
         $suppliers = Supplier::select('id', 'name')->orderBy('name')->get();
         $taxGroups = TaxGroup::where('active', true)->get();
         return parent::renderForm($view, compact('suppliers', 'taxGroups') + $data);
-    }
-
-    protected function prePaginationRender(iPaginationGenerator $paginationGenerator): iPaginationGenerator
-    {
-        $paginationGenerator->bindQueryParamFilter('category_code', 'product_categories.code');
-        return parent::prePaginationRender($paginationGenerator);
     }
 
     /**
@@ -92,7 +110,7 @@ class ProductTypeController extends AbstractAdminController
     public function store(Request $request)
     {
         $data = $request->all();
-        $v = Validator::make($data, []);
+        $v = Validator::make([], []);
         $rules = [
             'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
             'sku' => ['required', Rule::unique('product_types')],
@@ -118,14 +136,18 @@ class ProductTypeController extends AbstractAdminController
             'promotion_ends_at' => ['nullable', 'date'],
         ];
         $data['tax_groups'] = $data['tax_groups'] ?? [];
-        if(isset($data['category_id'])){
+        if (isset($data['category_id'])) {
             /** @var ProductCategory $productCategory */
-           $productCategory = ProductCategory::find($data['category_id']);
-           $rules += $productCategory->getCustomAttributeValidationRules();
+            $productCategory = ProductCategory::find($data['category_id']);
+            $rules += $productCategory->getCustomAttributeValidationRules();
             $v->setAttributeNames($productCategory->getCustomAttributeCaptions(true));
+            if (isset($data['custom_attributes'])) {
+                $data['custom_attributes'] = $productCategory->parseCustomAttributes($data['custom_attributes']);
+            }
         }
+        $v->setData($data);
         $v->setRules($rules);
-        if($v->fails()){
+        if ($v->fails()) {
             return back()->withInput()->withErrors($v);
         }
         if (ProductType::createNewProductType(Auth::user(), $data)) {
@@ -162,7 +184,7 @@ class ProductTypeController extends AbstractAdminController
     public function update(Request $request, ProductType $productType)
     {
         $partialData = $productType->preparePartialData(Auth::user(), $request->except(['_method', '_token']));
-        $rules = [
+        $rules = Arr::only([
             'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
             'name' => ['required'],
             'description' => [],
@@ -183,14 +205,24 @@ class ProductTypeController extends AbstractAdminController
             'in_promotion' => ['boolean'],
             'promotion_starts_at' => ['nullable', 'date'],
             'promotion_ends_at' => ['nullable', 'date'],
-        ];
+        ], array_keys($partialData));
 
-        $v = Validator::make($partialData, Arr::only($rules, array_keys($partialData)));
-        $v->sometimes('promotion_price', 'required|numeric', function($input){
+        $v = Validator::make([], []);
+        if (isset($productType->category_id)) {
+            /** @var ProductCategory $productCategory */
+            $productCategory = $productType->category;
+            $rules += $productCategory->getCustomAttributeValidationRules();
+            $v->setAttributeNames($productCategory->getCustomAttributeCaptions(true));
+            if (isset($partialData['custom_attributes'])) {
+                $partialData['custom_attributes'] = $productCategory->parseCustomAttributes($partialData['custom_attributes']);
+            }
+        }
+        $v->setData($partialData);
+        $v->setRules($rules);
+        $v->sometimes('promotion_price', 'required|numeric', function ($input) {
             return (isset($input->in_promotion) && $input->in_promotion) || isset($input->promotion_starts_at) || isset($input->promotion_ends_at);
         });
         if ($v->fails()) {
-            dd($v, $partialData);
             return back()->withInput()->withErrors($v);
         }
 

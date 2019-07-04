@@ -1,30 +1,32 @@
-@php $rendererData = $rendererData ?? [] @endphp
+@php
+    $rendererData = $rendererData ?? [];
+    $layout = $layout?? null;
+@endphp
 @if($hasSearchBox ?? true)
     @component('dashboard.components.search-list', [
         'canRunRawQuery' => $searchBoxConfig['canRunRawQuery'] ?? false,
         'id' => $id,
+        'layout' => $layout,
         'placeholder' => $searchBoxConfig['placeholder'] ?? '',
         'queryError' => $searchBoxConfig['queryError'] ?? null,
         'queryParamName' => $searchBoxConfig['queryParamName'] ?? 'q',
+        'sortConfig' => $searchBoxConfig['sortConfig'] ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
     ])
-    @slot('inlineFilters') {!! $searchBarInlineFilters ?? '' !!} @endslot
-    {!! $searchBar ?? '' !!}
-    @slot('extraControls') {{ $extraControls ?? '' }} @endslot
+        @slot('inlineFilters') {!! $searchBarInlineFilters ?? '' !!} @endslot
+        {!! $searchBar ?? '' !!}
+        @slot('extraControls') {{ $extraControls ?? '' }} @endslot
+        @slot('table')
+            @component('dashboard.components.pagination-table', compact('collection', 'columnTitles', 'id', 'rendererData', 'renderer'))
+                {!! $slot !!}
+            @endcomponent
+        @endslot
+        @slot('pagination')
+            {!! $collection->links() !!}
+        @endslot
     @endcomponent
+@else
+    @component('dashboard.components.pagination-table', compact('collection', 'columnTitles', 'id', 'rendererData', 'renderer'))
+        {!! $slot !!}
+    @endcomponent
+    {!! $collection->links() !!}
 @endif
-<table class="table table-striped" id="{{ $id . '-list' }}">
-    <thead>
-    @foreach($columnTitles as $columnTitle)
-        <th>{{ $columnTitle }}</th>
-    @endforeach
-    <tbody>
-    @forelse($collection as $item)
-        @component($renderer, compact('item') + $rendererData)@endcomponent
-    @empty
-        <tr>
-            <td class="text-center" colspan="{{ count($columnTitles) }}">{!! $slot !!}</td>
-        </tr>
-    @endforelse
-    </tbody>
-</table>
-{!! $collection->links() !!}

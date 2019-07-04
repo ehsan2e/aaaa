@@ -21,3 +21,10 @@
   margin-bottom: 20px;
   //display: none;
 }
+.form-control{
+  &.less-significant{
+    flex: none;
+    display: inline-block;
+    width: auto;
+  }
+}

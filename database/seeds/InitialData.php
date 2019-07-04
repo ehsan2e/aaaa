@@ -291,13 +291,13 @@ class InitialData extends Seeder
                         'type' => 'boolean',
                     ],
                     [
-                        'caption' => 'Pre Include',
+                        'caption' => 'Pre Included',
                         'captions' => [
                             'backend' => '',
                             'en' => '',
                         ],
                         'lookupValues' => [],
-                        'name' => 'pre_include',
+                        'name' => 'pre_included',
                         'required' => false,
                         'type' => 'boolean',
                     ],
@@ -305,6 +305,17 @@ class InitialData extends Seeder
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ]
+        ]);
+
+        DB::table('ticket_categories')->insert([
+            'title' => 'Miscellaneous',
+            'title_translations' => json_encode([
+                'fr' => 'Divers',
+            ]),
+            'type' => \App\TicketCategory::TYPE_INCOMING,
+            'active' => true,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
         ]);
     }
 }

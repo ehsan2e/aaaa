@@ -271,6 +271,16 @@ window.removeItem = function (url, message) {
         $(".chosen-select").chosen({disable_search_threshold: 10});
         $('[data-toggle="tooltip"]').tooltip();
         $('.uploader').uploader();
+
+        $('.listing-sort').on('click', '.dropdown-item', function (event) {
+            event.preventDefault();
+            var $this = $(this);
+            var $wrapper = $(event.delegateTarget);
+            $wrapper.find('[data-role=' + $this.data('target') + ']').val($this.data('value'));
+            $this.parent().prev().html($this.html());
+            $wrapper = null;
+            $this = null;
+        });
     });
 })(window, window.jQuery);
 

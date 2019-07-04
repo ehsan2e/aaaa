@@ -1,11 +1,12 @@
 @php
+    $multiple = $multiple ?? false;
     $oldName = str_replace(['[', ']'], ['.', ''], $name);
-    $value = old($oldName, (isset($model) ? (is_array($model) ? $model[$modelKey ?? $name] : $model->{$modelKey ?? $name}) : null) ?? (\Illuminate\Support\Arr::exists(old(), $oldName) ? '' : ($defaultValue ?? '')));
+    $value = old($oldName, (isset($model) ? (is_array($model) ? ($model[$modelKey ?? $name] ?? ($multiple ? [] : '')) : ($model->{$modelKey ?? $name} ?? ($multiple ? [] : ''))) : null) ?? (\Illuminate\Support\Arr::exists(old(), $oldName) ? '' : ($defaultValue ?? '')));
     if(isset($valueParser)){
         $value = $valueParser($value);
     }
     $inline  = $inline ?? false;
-    $type  = ($multiple ?? false) ? 'multi-choice' : 'single-choice';
+    $type  = $multiple ? 'multi-choice' : 'single-choice';
 @endphp
 <div class="{{($formGroup ?? true) ? 'form-group ' : ''}}row">
     <span class="col-md-4 text-md-right">{!! $slot !!}</span>

@@ -23,6 +23,7 @@
                                 'placeholder' => __('Search Tax Group'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
                             'renderer' => 'dashboard.admin.sales.tax-group.list-renderer',
                         ]){{ __('No tax group were found') }}@endcomponent

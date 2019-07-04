@@ -23,6 +23,7 @@
                                 'placeholder' => __('Search Ticket'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
                             'renderer' => 'dashboard.client.support.list-renderer',
                         ]){{ __('No ticket were found') }}@endcomponent

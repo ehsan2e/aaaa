@@ -28,9 +28,34 @@ abstract class AbstractDashboardController extends Controller
     protected $dashboardPrefix = 'dashboard';
 
     /**
+     * @var string
+     */
+    protected $defaultSortOrder = iPaginationGenerator::SORT_ASC;
+
+    /**
+     * @var string
+     */
+    protected $orderByField = 'order_by';
+
+    /**
+     * @var int
+     */
+    protected $recordsPerPage = 15;
+
+    /**
      * @var array
      */
     protected $searchableFields = [];
+
+    /**
+     * @var array
+     */
+    protected $sortableFields = [];
+
+    /**
+     * @var string
+     */
+    protected $sortDirectionField = 'sort_order';
 
     /**
      * @var string|null
@@ -65,7 +90,7 @@ abstract class AbstractDashboardController extends Controller
      */
     protected function getPaginator(Request $request): iPaginationGenerator
     {
-        return $this->paginate($request, $this->customizeQuery ? call_user_func($this->customizeQuery, $this->getBuilder()) : $this->getBuilder());
+        return $this->paginate($request, $this->customizeQuery ? call_user_func($this->customizeQuery, $this->getBuilder()) : $this->getBuilder(), $this->recordsPerPage);
     }
 
     /**
@@ -74,6 +99,14 @@ abstract class AbstractDashboardController extends Controller
     protected function getSearchableFields(): array
     {
         return $this->searchableFields;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getSortableFields(): array
+    {
+        return $this->sortableFields;
     }
 
     /**
@@ -119,7 +152,8 @@ abstract class AbstractDashboardController extends Controller
         $paginationGenerator = $this->getPaginator($request)
             ->view(sprintf($this->viewPath ?? '%s.%s.index', $this->dashboardPrefix, $this->getViewBasePath()))
             ->setCollectionName($this->collectionName)
-            ->setSearchableFields($this->getSearchableFields());
+            ->setSearchableFields($this->getSearchableFields())
+            ->setOrder($this->getSortableFields(), $this->orderByField, $this->sortDirectionField);
         return $this->prePaginationRender($paginationGenerator)->render($this->getIndexPageData());
     }
 

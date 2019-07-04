@@ -28,11 +28,12 @@
                                 'placeholder' => __('Search Ticket Category'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
                             'renderer' => 'dashboard.admin.crm.ticket-category.list-renderer',
                         ]){{ __('No ticket category were found') }}
                         @slot('searchBarInlineFilters')
-                            <select name="type" class="form-control">
+                            <select name="type" class="form-control less-significant">
                                 <option value="">{{ __('All types') }}</option>
                                 @foreach($types as $value => $label)
                                     @component('dashboard.components.option', ['value'=>$value, 'selectedValue' => $filteredType]){{ $label }}@endcomponent

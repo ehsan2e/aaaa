@@ -14,11 +14,12 @@ trait SearchablePaginate
     /**
      * @param Request $request
      * @param Builder $queryBuilder
+     * @param int|null $perPage
      * @return iPaginationGenerator
      */
-    public function paginate(Request $request, Builder $queryBuilder): iPaginationGenerator
+    public function paginate(Request $request, Builder $queryBuilder, int $perPage = null): iPaginationGenerator
     {
-        return (new PaginationGenerator($request->query->all(), $queryBuilder))
+        return (new PaginationGenerator($request->query->all(), $queryBuilder, $perPage))
             ->rawQuery(Auth::user()->can('raw-query'));
     }
 }

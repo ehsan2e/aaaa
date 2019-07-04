@@ -180,4 +180,39 @@ class ProductCategory extends Model
             'text' => 'Text',
         ];
     }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function parseCustomAttributes(array $data): array
+    {
+        $result = [];
+        foreach ($this->custom_attributes as $customAttribute){
+            if(!array_key_exists($customAttribute['name'], $data)){
+                if($customAttribute['type'] === 'boolean'){
+                    $result[$customAttribute['name']] = false;
+                }elseif (isset($customAttribute['default'])){
+                    $result[$customAttribute['name']] = $customAttribute['default'];
+                }
+                continue;
+            }
+            switch($customAttribute['type']){
+                case'price':
+                case'decimal':
+                    $result[$customAttribute['name']] = (float) $data[$customAttribute['name']];
+                    break;
+                case'integer':
+                    $result[$customAttribute['name']] = (int) $data[$customAttribute['name']];
+                    break;
+                case 'boolean':
+                    $result[$customAttribute['name']] = (bool) $data[$customAttribute['name']];
+                    break;
+                default:
+                    $result[$customAttribute['name']] = (string) $data[$customAttribute['name']];
+            }
+        }
+
+        return $result;
+    }
 }

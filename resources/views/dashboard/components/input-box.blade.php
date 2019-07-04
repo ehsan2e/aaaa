@@ -1,6 +1,6 @@
 @php
     $oldName = str_replace(['[', ']'], ['.', ''], $name);
-    $value = old($oldName, (isset($model) ? (is_array($model) ? $model[$modelKey ?? $name] : $model->{$modelKey ?? $name}) : null) ?? (\Illuminate\Support\Arr::exists(old(), $oldName) ? '' : ($defaultValue ?? '')));
+    $value = old($oldName, (isset($model) ? (is_array($model) ? ($model[$modelKey ?? $name] ?? '') : ($model->{$modelKey ?? $name} ?? '')) : null) ?? (\Illuminate\Support\Arr::exists(old(), $oldName) ? '' : ($defaultValue ?? '')));
     if(isset($valueParser)){
         $value = $valueParser($value);
     }

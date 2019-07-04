@@ -28,15 +28,16 @@
                         <hr class="my-3">
                         @component('dashboard.components.pagination', [
                             'collection' => $productTypes,
-                            'columnTitles' => [__('ID'),__('SKU'),__('Name'),__('Price'),__('Category'),__('Supplier'),__('Supplier SKU'),__('Active'),__('Actions')],
-                            'id' => 'product-type',
+                            'columnTitles' => [__('ID'),__('SKU'),__('Name'),__('Category'),__('Price'),__('Supplier'),__('Supplier SKU'),__('Active'),__('Actions')],
+                            'id' => $listId ?? 'product-type',
                             'searchBoxConfig' => [
                                 'canRunRawQuery' => $canRunRawQuery ?? false,
                                 'placeholder' => __('Search Product Type'),
                                 'queryError' => $queryError ?? null,
                                 'queryParamName' => $queryParamName ?? 'q',
+                                'sortConfig' => $sortConfig ?? ['options' => [], 'orderBy' => -1, 'orderByParam' => 'order_by', 'sortDirection' => \NovaVoip\Interfaces\iPaginationGenerator::SORT_ASC, 'sortDirectionParam' => 'sort_order'],
                             ],
-                            'renderer' => 'dashboard.admin.sales.tax-group.product-type-list-renderer',
+                            'renderer' => $renderer ?? 'dashboard.admin.sales.tax-group.product-type-list-renderer',
                         ]){{ __('No product type were found') }}@endcomponent
                     </div>
                 </div>

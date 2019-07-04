@@ -2,6 +2,7 @@
     <td>{{ $item->id }}</td>
     <td>{{ $item->sku }}</td>
     <td>{{ $item->name }}</td>
+    <td>{{ $item->category_name ?? '-' }}</td>
     <td>
         @if($item->price === $item->original_price)
             {{ $item->price }}

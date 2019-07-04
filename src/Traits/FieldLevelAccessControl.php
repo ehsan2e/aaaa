@@ -54,7 +54,11 @@ trait FieldLevelAccessControl
             array_combine($accessibleFields, array_fill(0, count($accessibleFields), null)),
             array_combine($accessibleBooleanFields, array_fill(0, count($accessibleBooleanFields), false)));
         foreach ($partialData as $key => $value) {
-            $partialData[$key] = isset($data[$key]) ? (in_array($key, $accessibleBooleanFields) ? ((bool)$data[$key]) : $data[$key]) : $value;
+            if(is_array($value)){
+                $partialData[$key] = array_merge_recursive($value, $data[$key] ?? []);
+            }else{
+                $partialData[$key] = isset($data[$key]) ? (in_array($key, $accessibleBooleanFields) ? ((bool)$data[$key]) : $data[$key]) : $value;
+            }
         }
 
         return $partialData;
