@@ -7,7 +7,7 @@
             <div class="col-md-12">
                 @component('dashboard.components.search-list', ['id' => 'gallery', 'placeholder' => __('Search image'), 'queryError' => $queryError, 'canRunRawQuery' => $canRunRawQuery])
                     <a class="btn btn-success"
-                       href="{{ route('dashboard.admin.gallery.upload-image') }}">{{ __('Upload Image') }}</a>
+                       href="{{ route('dashboard.admin.cms.gallery.upload-image') }}">{{ __('Upload Image') }}</a>
                 @endcomponent
                 @if(count($images) > 0)
                     <div class="row text-center text-lg-left">
@@ -22,7 +22,7 @@
                                                 data-clipboard-text="{{ $image->getUrl() }}">
                                             {{ __('Copy Url') }}</button>
                                         <a class="btn btn-danger"
-                                           href="Javascript:removeItem('{{ route('dashboard.admin.gallery.delete-image', ['image' => $image->id]) }}', '{{ __('Are you sure that you want to remove :name', ['name' => $image->name]) }}')"
+                                           href="Javascript:removeItem('{{ route('dashboard.admin.cms.gallery.delete-image', ['image' => $image->id]) }}', '{{ __('Are you sure that you want to remove :name', ['name' => $image->name]) }}')"
                                         >{{ __('Delete') }}</a>
                                     </div>
                                     <a href="{{ $image->getUrl() }}" target="_blank" class="d-block">

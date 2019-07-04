@@ -73,6 +73,16 @@ Route::prefix('dashboard')
                         ->name('cms.')
                         ->group(function () {
                             Route::resource('custom-url', 'CustomUrlController', ['except' => ['show']]);
+
+                            Route::get('gallery', 'MediaController@gallery')
+                                ->name('gallery.index');
+
+                            Route::get('gallery/upload-image', 'MediaController@showUploadImageForm')
+                                ->name('gallery.upload-image');
+                            Route::post('gallery/upload-image', 'MediaController@uploadImage');
+                            Route::delete('gallery/{image}/delete', 'MediaController@deleteImage')
+                                ->name('gallery.delete-image');
+
                             Route::resource('post', 'PostController', ['except' => ['show', 'destroy']]);
                             Route::resource('post-category', 'PostCategoryController', ['except' => ['show', 'destroy']]);
                         });
@@ -91,15 +101,6 @@ Route::prefix('dashboard')
                                 ->name('tax-group.product-type.index');
                             Route::resource('tax-group', 'TaxGroupController', ['except' => ['destroy', 'show']]);
                         });
-
-                    Route::get('gallery', 'MediaController@gallery')
-                        ->name('gallery.index');
-
-                    Route::get('gallery/upload-image', 'MediaController@showUploadImageForm')
-                        ->name('gallery.upload-image');
-                    Route::post('gallery/upload-image', 'MediaController@uploadImage');
-                    Route::delete('gallery/{image}/delete', 'MediaController@deleteImage')
-                        ->name('gallery.delete-image');
                 });
 
 

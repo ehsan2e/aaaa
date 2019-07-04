@@ -9,7 +9,7 @@
                     <div class="card-header">
                         <nav class="nav nav-pills flex-column flex-sm-row">
                             <span class="text-sm-center">{{ __('Create Supplier') }}</span>
-                            <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.admin.supplier.index') }}">{{ __('Back') }}</a></span>
+                            <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary" href="{{ route('dashboard.admin.cms.gallery.index') }}">{{ __('Back') }}</a></span>
                         </nav>
                     </div>
 

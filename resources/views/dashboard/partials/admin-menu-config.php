@@ -186,7 +186,7 @@ return [
                 'label' => __('Gallery'),
                 'icon' => null,
                 'identifier' => 'gallery',
-                'href' => route('dashboard.admin.gallery.index'),
+                'href' => route('dashboard.admin.cms.gallery.index'),
                 'ability' => null,
                 'children' => [],
             ],

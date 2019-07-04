@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard\Admin;
+namespace App\Http\Controllers\Dashboard\Admin\CMS;
 
 use App\Http\Controllers\Controller;
 use App\MediaImage;
@@ -59,7 +59,7 @@ class MediaController extends Controller
         $queryBuilder = MediaImage::with(['versions']);
 
         return $this->paginate($request, $queryBuilder)
-            ->view('dashboard.admin.gallery.index')
+            ->view('dashboard.admin.cms.gallery.index')
             ->setCollectionName('images')
             ->setSearchableFields(['name'])
             ->render();
@@ -70,7 +70,7 @@ class MediaController extends Controller
      */
     public function showUploadImageForm()
     {
-        return view('dashboard.admin.gallery.upload-image');
+        return view('dashboard.admin.cms.gallery.upload-image');
     }
 
     /**
@@ -100,7 +100,7 @@ class MediaController extends Controller
         $mediaImage = MediaImage::createFromUploadedFile($uploadedImage, $request->name);
         if (isset($mediaImage)) {
             flash()->success(__('Image :name added to gallery successfully', ['name' => $request->name]));
-            return redirect()->route('dashboard.admin.gallery.index');
+            return redirect()->route('dashboard.admin.cms.gallery.index');
         }
 
         flash()->error(__('An error happened please try again later'));
