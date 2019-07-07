@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\CartItem;
+use App\Policies\CartItemPolicy;
 use App\Policies\TicketPolicy;
 use App\Ticket;
 use App\User;
@@ -16,6 +18,7 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $policies = [
+        CartItem::class => CartItemPolicy::class,
          Ticket::class => TicketPolicy::class,
     ];
 

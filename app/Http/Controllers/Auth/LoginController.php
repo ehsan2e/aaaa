@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Cart;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -41,6 +43,23 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
         $this->middleware('recaptcha')->only('login');
+    }
+
+    /**
+     * The user has been authenticated.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  mixed $user
+     * @return mixed
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        $cartId = $request->session()->get('cart_id');
+        if(isset($cartId) && $user->isClient()){
+            Cart::mergeUserCart($user, $cartId);
+        }
     }
 
     /**

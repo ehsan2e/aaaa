@@ -9,12 +9,15 @@ class Ability extends Model
 {
     const ALL = 'all';
     const BACKEND_ADMIN = 'backend-admin';
+    const CART_MANAGER = 'cart-manager';
     const COMPOSE_HTML = 'compose-html';
     const LOGIN_AS = 'login-as';
     const LOGIN_AS_CLIENT = 'login-as-client';
     const LOGIN_AS_SUPPLIER = 'login-as-supplier';
     const MODEL_ACCESS_ALL = 'model_access_all';
     const RAW_QUERY = 'raw-query';
+    const REMOVE_ITEM_FROM_CART = 'remove-item-from-cart';
+    const SALES_ADMIN = 'sales-admin';
 
     protected $fillable = ['*'];
     protected $table = 'abilities';
@@ -36,6 +39,10 @@ class Ability extends Model
             self::BACKEND_ADMIN => [
                 __('Admin of backend'),
                 [self::ALL],
+            ],
+            self::CART_MANAGER => [
+                __('Creating and modifying carts'),
+                [self::SALES_ADMIN],
             ],
             self::COMPOSE_HTML => [
                 __('Use html tags in texts'),
@@ -59,6 +66,14 @@ class Ability extends Model
             ],
             self::RAW_QUERY => [
                 __('Run raw query in listing search boxes'),
+                [self::ALL],
+            ],
+            self::REMOVE_ITEM_FROM_CART => [
+                __('Remove item from clients cart'),
+                [self::CART_MANAGER],
+            ],
+            self::SALES_ADMIN => [
+                __('Handling all things relating to sales'),
                 [self::ALL],
             ],
         ];

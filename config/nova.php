@@ -1,6 +1,7 @@
 <?php
 return [
     'admin-email' => env('ADMIN_EMAIL', 'admin@example.com'),
+    'currency_code' => env('CURRENCY_CODE', 'USD'),
     'language' => [
         'en' => [
             'code' => 'en',
@@ -15,6 +16,8 @@ return [
     ],
     'box_category_code' => env('BOX_CATEGORY_CODE', 'box'),
     'box_service_category_code' => env('BOX_SERVICE_CATEGORY_CODE', 'box_service'),
+
+    'extended_invoice' => env('EXTENDED_INVOICE', null),
 
     'ignore_recaptcha' => !is_null(env('IGNORE_RECAPTCHA', null)),
     'recaptcha_secret_key' => env('RECAPTCHA_SECRET_KEY', ''),

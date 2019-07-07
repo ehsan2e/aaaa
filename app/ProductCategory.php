@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use NovaVoip\Exceptions\SupervisedTransactionException;
 use function NovaVoip\supervisedTransaction;
 use function NovaVoip\translateEntity;
@@ -76,6 +77,11 @@ class ProductCategory extends Model
     public function parentCategory(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id', 'id');
+    }
+
+    public function products(): HasMany
+    {
+        return $this->hasMany(ProductType::class, 'category_id', 'id');
     }
 
 
@@ -195,6 +201,10 @@ class ProductCategory extends Model
                 }elseif (isset($customAttribute['default'])){
                     $result[$customAttribute['name']] = $customAttribute['default'];
                 }
+                continue;
+            }
+            if((!isset($data[$customAttribute['name']])) && in_array($customAttribute['type'], ['price', 'decimal', 'integer'])){
+                $result[$customAttribute['name']] = null;
                 continue;
             }
             switch($customAttribute['type']){

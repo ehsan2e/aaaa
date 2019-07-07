@@ -4,9 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use NovaVoip\Traits\CalculatesTax;
 
 class TaxRule extends Model
 {
+    use CalculatesTax;
+
     protected $casts = ['active' => 'boolean', 'is_percentage' => 'boolean', 'extra_information' => 'array'];
     protected $fillable = ['active', 'amount', 'country_code', 'extra_information', 'is_percentage', 'priority', 'province_code'];
     protected $table = 'tax_rules';

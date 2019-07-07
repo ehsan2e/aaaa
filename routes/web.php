@@ -120,7 +120,13 @@ Route::prefix('dashboard')
 
     });
 
-Route::fallback('HomeController@fallback');
+Route::get('hosted-pbx/{cart_item?}', 'HostedPBXSessionController@configureBox')->name('hosted-pbx-session');
+Route::post('hosted-pbx/{cart_item?}', 'HostedPBXSessionController@addToCart');
+
+Route::get('cart', 'CartController@showCart')->name('cart');
+Route::post('cart/{cart_item}', 'CartController@removeItem')->name('remove-cart-item');
+Route::post('cart-tax-region', 'CartController@taxRegion')->name('cart-tax-region');
+Route::post('redeem-voucher', 'CartController@redeemVoucher')->name('redeem-voucher');
 
 Route::prefix('knowledge-base')
     ->name('knowledge-base.')
@@ -129,3 +135,5 @@ Route::prefix('knowledge-base')
         Route::get('/category/{category}', 'KnowledgeBaseController@categoryIndex')->name('category');
         Route::get('/post/{post}', 'KnowledgeBaseController@post')->name('post');
     });
+
+Route::fallback('HomeController@fallback');

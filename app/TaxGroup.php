@@ -6,9 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use NovaVoip\Traits\CalculatesTax;
 
 class TaxGroup extends Model
 {
+    use CalculatesTax;
+
     protected $casts = ['active' => 'boolean', 'is_percentage' => 'boolean', 'name_translations' => 'array'];
     protected $fillable = ['active', 'amount', 'is_percentage', 'name', 'name_translations'];
     protected $table = 'tax_groups';

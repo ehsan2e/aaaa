@@ -9,7 +9,7 @@
     {{--</div>--}}
 {{--</li>--}}
 <li class="nav-item">
-    <a class="nav-link" href="#">
+    <a class="nav-link" href="{{ route('cart') }}">
         <i class="fa fa-shopping-cart"></i>
         <span class="caret"></span>
     </a>

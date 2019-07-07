@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Cart;
 use App\Client;
 use App\Role;
 use App\User;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
@@ -83,5 +85,22 @@ class RegisterController extends Controller
             $user->client()->save($client);
             return $user;
         }, null);
+    }
+
+    /**
+     * The user has been registered.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  mixed $user
+     * @return mixed
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    protected function registered(Request $request, $user)
+    {
+        $cartId = $request->session()->get('cart_id');
+        if(isset($cartId) && $user->isClient()){
+            Cart::mergeUserCart($user, $cartId);
+        }
     }
 }
