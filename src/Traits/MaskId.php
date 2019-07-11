@@ -39,7 +39,7 @@ trait MaskId
      */
     public static function decryptMask(string $ticketNumber): ?int
     {
-        if (preg_match('/^' . self::getMaskPrefix() . '([0-9a-fA-F]+)$/', $ticketNumber, $matches) !== false) {
+        if (preg_match('/^' . self::getMaskPrefix() . '([0-9a-fA-F]+)$/', $ticketNumber, $matches) === 1) {
             $id = hexdec($matches[1]);
             $id -= self::MASK_OFFSET;
             $id /= self::MASK_MULTIPLIER;

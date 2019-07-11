@@ -47,6 +47,8 @@ Route::prefix('dashboard')
                     Route::get('order/{order}/invoice', 'OrderController@invoiceIndex')
                         ->name('order.invoice-index');
                     Route::get('order/{order}', 'OrderController@show')->name('order.show');
+
+                    Route::get('wallet', 'WalletController@index')->name('wallet');
                 });
 
             Route::prefix('admin')

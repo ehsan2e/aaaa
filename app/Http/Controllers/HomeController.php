@@ -42,7 +42,7 @@ class HomeController extends Controller
 
     public function fallback(Request $request)
     {
-        if (preg_match('#^media/image/([\w\-]+)(\.(\d+)x(\d+)|)\.(jpg|jpeg|png|gif)$#', $request->path(), $matches)) {
+        if (preg_match('#^media/image/([\w\-]+)(\.(\d+)x(\d+)|)\.(jpg|jpeg|png|gif)$#', $request->path(), $matches) === 1) {
             return app()->call('App\Http\Controllers\Dashboard\Admin\CMS\MediaController@compilePublicImage', ["{$matches[1]}.{$matches['5']}", empty($matches[3]) ? null : ((int)$matches[3]), empty($matches[4]) ? null : ((int)$matches[4])]);
         }
         $path = $request->path();

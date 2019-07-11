@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use NovaVoip\Interfaces\iTransactionCollectionGenerator;
 
 class User extends Authenticatable
 {
@@ -88,6 +89,44 @@ class User extends Authenticatable
     public function client(): HasOne
     {
         return $this->hasOne(User::class, 'user_id', 'id');
+    }
+
+    /**
+     * @param iTransactionCollectionGenerator $transactionCollectionGenerator
+     * @param null $insight
+     * @return bool
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function createTransaction(iTransactionCollectionGenerator $transactionCollectionGenerator, &$insight=null): bool
+    {
+        return Transaction::createTransaction($this, $transactionCollectionGenerator, $insight);
+    }
+
+    /**
+     * @param string $modelClass
+     * @return array
+     */
+    public function getModelAccessibleFields(string $modelClass): array
+    {
+        if($this->can('model_access_all')){
+            return ['*'];
+        }
+
+        return [];
+    }
+
+    /**
+     * @param string $modelClass
+     * @return array
+     */
+    public function getModelAccessibleRelations(string $modelClass): array
+    {
+        if($this->can('model_access_all')){
+            return ['*'];
+        }
+
+        return [];
     }
 
     /**
@@ -200,6 +239,11 @@ class User extends Authenticatable
         return $this->hasOne(Supplier::class, 'user_id', 'id');
     }
 
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class, 'user_id', 'id');
+    }
+
     /**
      * @param array $data
      * @return bool
@@ -208,31 +252,5 @@ class User extends Authenticatable
     {
         $this->fill($this->prepareProfileData($data));
         return $this->save();
-    }
-
-    /**
-     * @param string $modelClass
-     * @return array
-     */
-    public function getModelAccessibleFields(string $modelClass): array
-    {
-        if($this->can('model_access_all')){
-            return ['*'];
-        }
-
-        return [];
-    }
-
-    /**
-     * @param string $modelClass
-     * @return array
-     */
-    public function getModelAccessibleRelations(string $modelClass): array
-    {
-        if($this->can('model_access_all')){
-            return ['*'];
-        }
-
-        return [];
     }
 }

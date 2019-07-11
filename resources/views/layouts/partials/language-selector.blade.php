@@ -3,7 +3,7 @@
     <li class="nav-item dropdown">
         <a id="languageDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false" v-pre>
-            <i class="fa fa-globe"></i>
+            {{--<i class="fa fa-globe"></i>--}}
             {{ $languages[app()->getLocale()]['display'] ?? ucfirst(app()->getLocale()) }}
             <span class="caret"></span>
         </a>

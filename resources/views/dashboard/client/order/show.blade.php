@@ -1,4 +1,4 @@
-@php \App\Facades\UIManager::setActivePath('order') @endphp
+@php \App\Facades\UIManager::setActivePath('orders') @endphp
 @extends('layouts.dashboard')
 
 @section('content')
@@ -29,10 +29,10 @@
                                 @elseif($order->can_be_invoiced && ($order->invoices_issued_count === 0))
                                     <span>{{ __('Pending invoice') }}</span>
                                 @elseif($order->is_cancelled))
-                                    <span>{{ __('Cancelled') }}</span>
-                                    <span>@date($order->cancelled_at, 'Y-m-d H:i')</span>
+                                <span>{{ __('Cancelled') }}</span>
+                                <span>@date($order->cancelled_at, 'Y-m-d H:i')</span>
                                 @elseif($order->is_paid))
-                                    <span>{{ __('Paid') }}</span>
+                                <span>{{ __('Paid') }}</span>
                                 <span>@date($order->paid_at, 'Y-m-d H:i')</span>
                                 @endif
                             </div>
@@ -54,12 +54,12 @@
                             </div>
                             <div class="col-lg-6 col-sm-8">
                                 <b>{{ __('Tax Region') }}</b>
-                                <span>{{ \NovaVoip\translateEntity($order->country) }} - {{ \NovaVoip\translateEntity($order->province) }}</span>
+                                <span>{{ \NovaVoip\translateEntity($order->country) }}
+                                    - {{ \NovaVoip\translateEntity($order->province) }}</span>
                             </div>
                         </div>
-                    </div>
-                    <table class="table table-striped">
-                        <thead>
+                        <table class="table mt-3">
+                            <thead>
                             <tr>
                                 <th></th>
                                 <th>{{ __('Item') }}</th>
@@ -76,11 +76,12 @@
                                     <th>{{ __('Grand Total') }}</th>
                                 @endif
                             </tr>
-                        </thead>
-                        <tbody>
-                        @component('dashboard.client.order.row', ['items' => $order->items, 'extended' => $extended, 'order' => $order]) @endcomponent
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            @component('dashboard.client.order.row', ['items' => $order->items, 'extended' => $extended, 'order' => $order]) @endcomponent
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

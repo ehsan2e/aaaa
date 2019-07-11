@@ -1,4 +1,4 @@
-@php \App\Facades\UIManager::setActivePath('order') @endphp
+@php \App\Facades\UIManager::setActivePath('orders') @endphp
 @extends('layouts.dashboard')
 
 @section('content')

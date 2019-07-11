@@ -41,6 +41,16 @@
                         </a>
 
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="accountDropdown">
+                            @client()
+                            <a href="{{ route('dashboard.client.wallet') }}" class="dropdown-item text-center">
+                                <span class="text-{{ \Illuminate\Support\Facades\Auth::user()->balance > 0 ? 'success': 'danger' }}">
+                                    <i class="fa fa-money"></i>
+                                    {{ \Illuminate\Support\Facades\Auth::user()->balance }}
+                                    <small>{{ $systemCurrencyCode }}</small>
+                                </span>
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            @endclient
                             <a href="{{ route('dashboard.profile') }}"
                                class="dropdown-item @inactivepath('profile', 'active')">{{ __('Profile') }}</a>
                             <a href="{{ route('dashboard.change-password') }}"

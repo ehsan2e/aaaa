@@ -4,10 +4,11 @@
     if(isset($valueParser)){
         $value = $valueParser($value);
     }
+    $inline = $inline ?? false;
 @endphp
-<div class="form-group row">
-    <label for="{{ $name }}" class="col-md-4 col-form-label text-md-right">{!! $slot !!}</label>
-    <div class="col-md-6">
+@if($inline)
+    <div class="form-group form-inline">
+        <label for="{{ $name }}">{!! $slot !!}</label>
         <input type="{{ $textType ?? 'text' }}" id="{{ $name }}" name="{{ $name }}"
                class="form-control @error($oldName) is-invalid @enderror"
                value="{{ $value }}" autocomplete="{{ $name }}"
@@ -20,4 +21,21 @@
         </span>
         @enderror
     </div>
-</div>
+@else
+    <div class="form-group row">
+        <label for="{{ $name }}" class="col-md-4 col-form-label text-md-right">{!! $slot !!}</label>
+        <div class="col-md-6">
+            <input type="{{ $textType ?? 'text' }}" id="{{ $name }}" name="{{ $name }}"
+                   class="form-control @error($oldName) is-invalid @enderror"
+                   value="{{ $value }}" autocomplete="{{ $name }}"
+                   @if($autofocus ?? false) autofocus @endif
+                   @if($required ?? false) required @endif
+            >
+            @error($oldName)
+            <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+        </span>
+            @enderror
+        </div>
+    </div>
+@endif
