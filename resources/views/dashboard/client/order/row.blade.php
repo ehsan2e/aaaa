@@ -26,7 +26,7 @@
             <td>{{ $item->amount  }}</td>
             <td>
                 {{ $item->productType->price }}
-                @if($item->productType->imposes_pre_invoice_negotiation)
+                @if((!isset($item->negotiated_at)) && $order->needs_negotiation && $item->productType->imposes_pre_invoice_negotiation)
                     <i class="fa fa-info-circle text-info"
                        title="{{ __('Final price will be determined through an interview after order gets placed') }}"
                        data-toggle="tooltip"></i>
@@ -39,7 +39,7 @@
                 <td>{{ $item->grand_total }}</td>
             @endif
         </tr>
-        @component('cart.row', ['items' => $items, 'parentId' => $item->id, 'level' => $level + 1, 'extended' => $extended]) @endcomponent
+        @component('dashboard.client.order.row', ['items' => $items, 'parentId' => $item->id, 'level' => $level + 1, 'extended' => $extended, 'order' => $order]) @endcomponent
         @break
         @default
         <tr class="cart-invoice-row .cart-invoice-row-level-{{$level}}@if($level > 0) cart-invoice-row-sub-item @endif">
@@ -59,7 +59,7 @@
             <td>{{ $item->amount  }}</td>
             <td>
                 {{ $item->productType->price }}
-                @if($item->productType->imposes_pre_invoice_negotiation)
+                @if((!isset($item->negotiated_at)) && $order->needs_negotiation && $item->productType->imposes_pre_invoice_negotiation)
                     <i class="fa fa-info-circle text-info"
                        title="{{ __('Final price will be determined through an interview after order gets placed') }}"
                        data-toggle="tooltip"></i>
@@ -72,6 +72,6 @@
                 <td>{{ $item->grand_total}}</td>
             @endif
         </tr>
-        @component('cart.row', ['items' => $items, 'parentId' => $item->id, 'level' => $level + 1, 'extended' => $extended]) @endcomponent
+        @component('dashboard.client.order.row', ['items' => $items, 'parentId' => $item->id, 'level' => $level + 1, 'extended' => $extended, 'order' => $order]) @endcomponent
     @endswitch
 @endforeach

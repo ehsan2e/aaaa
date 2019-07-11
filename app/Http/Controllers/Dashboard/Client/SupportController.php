@@ -51,7 +51,7 @@ class SupportController extends AbstarctClientController
         return [
             'tickets.subject',
             function (Builder $query, string $q) {
-                if (($ticketId = Ticket::decryptTicketNumber($q)) !== null) {
+                if (($ticketId = Ticket::decryptMask($q)) !== null) {
                     $query->where('ticket_followers.ticket_id', $ticketId);
                 }
             }

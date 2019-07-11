@@ -220,7 +220,7 @@ class PaginationGenerator implements iPaginationGenerator
 
         // Set query order if applicable
         $orderBy = $this->resolveOrderBy();
-        $sortDirection = $this->resolveSortDirection();
+        $sortDirection = $this->resolveSortDirection($orderBy);
         if ($orderBy !== -1) {
             $this->requestData[$this->sorting['orderByParam']] = $orderBy;
             $this->requestData[$this->sorting['sortDirectionParam']] = $sortDirection;
@@ -292,11 +292,13 @@ class PaginationGenerator implements iPaginationGenerator
     }
 
     /**
+     * @param int|null $orderBy
      * @return string
      */
-    protected function resolveSortDirection(): string
+    protected function resolveSortDirection(int $orderBy = null): string
     {
-        $requestedSortDirection = $this->requestData[$this->sorting['sortDirectionParam']] ?? iPaginationGenerator::SORT_ASC;
+        $defaultSortDirection = isset($orderBy)? ($this->sorting['sortConfig'][$orderBy][2] ?? null): null;
+        $requestedSortDirection = $this->requestData[$this->sorting['sortDirectionParam']] ?? $defaultSortDirection ?? iPaginationGenerator::SORT_ASC;
         return in_array($requestedSortDirection, [iPaginationGenerator::SORT_ASC, iPaginationGenerator::SORT_DESC]) ? $requestedSortDirection : iPaginationGenerator::SORT_ASC;
     }
 

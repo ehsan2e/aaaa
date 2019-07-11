@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\CartItem;
+use App\Order;
 use App\Policies\CartItemPolicy;
+use App\Policies\OrderPolicy;
 use App\Policies\TicketPolicy;
 use App\Ticket;
 use App\User;
@@ -19,7 +21,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         CartItem::class => CartItemPolicy::class,
-         Ticket::class => TicketPolicy::class,
+        Order::class => OrderPolicy::class,
+        Ticket::class => TicketPolicy::class,
     ];
 
     /**
@@ -30,8 +33,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
-        Gate::before(function(?User $user, $ability, $params){
-            if($user && ($user->isAble($ability))){
+        Gate::before(function (?User $user, $ability, $params) {
+            if ($user && ($user->isAble($ability))) {
                 return true;
             }
         });

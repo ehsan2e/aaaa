@@ -70,7 +70,7 @@
                         <hr>
                         <div class="card-body clearfix">
                             <div class="pull-right">
-                                <a href="#" class="btn btn-success"><i class="fa fa-check"></i> {{ __('Checkout') }}</a>
+                                <a href="{{ route('checkout') }}" class="btn btn-success"></i> {{ __('Checkout') }}</a>
                             </div>
                         </div>
                     @endif

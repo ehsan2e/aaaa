@@ -41,6 +41,12 @@ Route::prefix('dashboard')
                         ->name('support.create-entry');
                     Route::resource('support', 'SupportController', ['except' => ['destroy', 'edit', 'update']])
                         ->parameter('support', 'ticket');
+
+
+                    Route::get('order', 'OrderController@index')->name('order.index');
+                    Route::get('order/{order}/invoice', 'OrderController@invoiceIndex')
+                        ->name('order.invoice-index');
+                    Route::get('order/{order}', 'OrderController@show')->name('order.show');
                 });
 
             Route::prefix('admin')
@@ -119,6 +125,9 @@ Route::prefix('dashboard')
         Route::post('locked-screen', 'PanelController@unlockScreen')->middleware('recaptcha');
 
     });
+Route::get('checkout', 'CheckoutController')
+    ->name('checkout')
+    ->middleware('auth');
 
 Route::get('hosted-pbx/{cart_item?}', 'HostedPBXSessionController@configureBox')->name('hosted-pbx-session');
 Route::post('hosted-pbx/{cart_item?}', 'HostedPBXSessionController@addToCart');

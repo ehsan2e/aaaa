@@ -8,9 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use NovaVoip\Exceptions\SupervisedTransactionException;
 use function NovaVoip\supervisedTransaction;
+use NovaVoip\Traits\MaskId;
 
 class Ticket extends Model
 {
+    use MaskId;
+
+    const MASK_MULTIPLIER = 5073;
+    const MASK_NAME = 'ticket_number';
+    const MASK_OFFSET = 109;
+    const MASK_PREFIX = 'TCK-';
+
     const STATUS_NEEDS_ACTION = 1;
     const STATUS_WAITING_RESPONSE = 2;
     const STATUS_IN_PROGRESS = 3;
@@ -55,7 +63,7 @@ class Ticket extends Model
 
     public function getTicketNumberAttribute()
     {
-        return self::generateTicketNumber($this->id);
+        return self::generateMask($this->id);
     }
 
     public function initiator(): BelongsTo
@@ -134,30 +142,6 @@ class Ticket extends Model
 
             return $instance;
         }, null, false, false, $insight);
-    }
-
-    /**
-     * @param string $ticketNumber
-     * @return int|null
-     */
-    public static function decryptTicketNumber(string $ticketNumber): ?int
-    {
-        if (preg_match('/^#?[0-9a-fA-F]+$/', $ticketNumber) !== false) {
-            $id = hexdec($ticketNumber);
-            $id -= 246;
-            $id /= 5000;
-            return (is_int($id) && $id > 0) ? $id : null;
-        }
-        return null;
-    }
-
-    /**
-     * @param $id
-     * @return string
-     */
-    public static function generateTicketNumber(int $id): string
-    {
-        return '#' . str_pad(strtoupper(dechex($id * 5000 + 246)), 10, '0', STR_PAD_LEFT);
     }
 
     public static function getUrgencies(): array

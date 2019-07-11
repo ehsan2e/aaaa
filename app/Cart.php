@@ -23,9 +23,86 @@ class Cart extends Model
     protected $fillable = ['active', 'cached_at', 'discount', 'extra_information', 'grand_total', 'session', 'sub_total', 'tax'];
     protected $table = 'carts';
 
+    /**
+     * @param bool $createInvoice
+     * @param bool $force
+     * @param null $insight
+     * @return Order|null
+     * @throws SupervisedTransactionException
+     * @throws \Exception
+     */
+    public function createOrder(bool $createInvoice = true, bool $force = false, &$insight = null): ?Order
+    {
+        return supervisedTransaction(function ($insight) use ($createInvoice, $force): ?Order {
+            /** @var Cart $lockedCart */
+            $lockedCart = self::lockForUpdate()->find($this->id);
+            if (!($lockedCart && ($lockedCart->active || $force))) {
+                $insight->message = __('Cart is closed');
+                return null;
+            }
+            $lockedCart->active = false;
+            $lockedCart->save();
+
+            $lockedCart->load(['items.productType', 'user']);
+            /** @var Order $order */
+            $order = New Order($lockedCart->attributesToArray());
+            $order->cart()->associate($lockedCart);
+
+            $orderItems = [];
+            $hasSpecialItems = false;
+            /** @var CartItem $item */
+            foreach ($lockedCart->items as $item) {
+                $orderItem = new OrderItem($item->attributesToArray());
+                $orderItems[$item->id] = [
+                    'parent' => $item->parent_id,
+                    'orderItem' => $orderItem,
+                ];
+                $hasSpecialItems = $hasSpecialItems || $item->productType->imposes_pre_invoice_negotiation;
+            }
+
+            $order->can_be_invoiced = $hasSpecialItems;
+            $order->needs_negotiation = $hasSpecialItems;
+            $order->save();
+
+            do {
+                $readyItems = array_filter($orderItems, function ($item) use ($orderItems) {
+                    return (!$item['orderItem']->id) && (is_null($item['parent']) || isset($orderItems[$item['parent']]['orderItem']->id));
+                });
+                $c = count($readyItems);
+                if ($c > 0) {
+                    $savableOrderItems = array_map(function ($item) use ($orderItems) {
+                        $orderItem = $item['orderItem'];
+                        $orderItem->parent_id = isset($item['parent']) ? $orderItems[$item['parent']]['orderItem']->id : null;
+                        return $orderItem;
+                    }, $readyItems);
+                    $order->items()->saveMany($savableOrderItems);
+                }
+            } while ($c > 0);
+
+            if(!$hasSpecialItems){
+                $order->issueInvoice();
+            }
+            return $order;
+        }, null, true, false, $insight);
+    }
+
     public function items(): HasMany
     {
         return $this->hasMany(CartItem::class, 'cart_id', 'id');
+    }
+
+    /**
+     * @param CartItem $cartItem
+     * @return bool
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function removeItem(CartItem $cartItem): bool
+    {
+        return $this->updateFigures(function () use ($cartItem) {
+            $cartItem->delete();
+            return true;
+        });
     }
 
     /**
@@ -34,6 +111,22 @@ class Cart extends Model
     public function scopeOpenForModification(Builder $query)
     {
         $query->where('active', true);
+    }
+
+    /**
+     * @param string $countryCode
+     * @param string $provinceCode
+     * @return bool
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function updateTaxRegion(?string $countryCode, ?string $provinceCode): bool
+    {
+        return $this->updateFigures(function (Cart $cart) use ($countryCode, $provinceCode) {
+            $cart->country_code = $countryCode;
+            $cart->province_code = $provinceCode;
+            return true;
+        });
     }
 
     public function user(): BelongsTo
@@ -132,20 +225,6 @@ class Cart extends Model
     }
 
     /**
-     * @param CartItem $cartItem
-     * @return bool
-     * @throws \Exception
-     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
-     */
-    public function removeItem(CartItem $cartItem): bool
-    {
-        return $this->updateFigures(function () use ($cartItem) {
-            $cartItem->delete();
-            return true;
-        });
-    }
-
-    /**
      * @param callable|null $fn
      * @return bool
      * @throws \Exception
@@ -235,21 +314,5 @@ class Cart extends Model
             $cart->save();
             return true;
         }, false, true, false);
-    }
-
-    /**
-     * @param string $countryCode
-     * @param string $provinceCode
-     * @return bool
-     * @throws \Exception
-     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
-     */
-    public function updateTaxRegion(?string $countryCode, ?string $provinceCode): bool
-    {
-        return $this->updateFigures(function (Cart $cart) use ($countryCode, $provinceCode) {
-            $cart->country_code = $countryCode;
-            $cart->province_code = $provinceCode;
-            return true;
-        });
     }
 }

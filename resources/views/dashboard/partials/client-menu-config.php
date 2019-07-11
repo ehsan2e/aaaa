@@ -28,6 +28,14 @@ return [
         'children' => [],
     ],
     [
+        'label' => __('Orders'),
+        'icon' => null,
+        'identifier' => 'orders',
+        'href' => route('dashboard.client.order.index'),
+        'ability' => null,
+        'children' => [],
+    ],
+    [
         'label' => __('Support'),
         'icon' => null,
         'identifier' => 'support',
