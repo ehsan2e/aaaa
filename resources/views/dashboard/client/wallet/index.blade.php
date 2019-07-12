@@ -1,4 +1,5 @@
 @php
+    \App\Facades\UIManager::setActivePath('wallet');
     $filteredFromDate = \Illuminate\Support\Facades\Request::query('from_date', '');
     $filteredToDate = \Illuminate\Support\Facades\Request::query('to_date', '');
 @endphp
@@ -12,6 +13,11 @@
                     <div class="card-header">
                         <nav class="nav nav-pills flex-column flex-sm-row">
                             <span class="text-sm-center">{{ __('Wallet') }}</span>
+                            <span class="text-sm-center ml-auto">
+                                <a class="btn btn-sm btn-primary"
+                                   href="{{ route('dashboard.client.wallet.charge') }}"
+                                >{{ __('Charge Wallet') }}</a>
+                            </span>
                         </nav>
                     </div>
 

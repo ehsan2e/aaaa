@@ -4,20 +4,7 @@
     <td>{{ $item->discount }}</td>
     <td>{{ $item->tax }}</td>
     <td>{{ $item->grand_total }}</td>
-    <td>
-        @if($item->needs_negotiation)
-            {{ __('Waiting for interview') }}
-        @elseif($item->can_be_invoiced && ($item->invoices_issued_count === 0))
-            {{ __('Pending invoice') }}
-        @elseif($item->is_cancelled))
-            {{ __('Cancelled') }}
-            @date($item->cancelled_at, 'Y-m-d H:i')
-        @elseif($item->is_paid))
-            {{ __('Paid') }}
-            @date($item->paid_at, 'Y-m-d H:i')
-        @endif
-
-    </td>
+    <td>@component('dashboard.client.order.status', ['order' => $item]) @endcomponent</td>
     <td>@date($item->created_at, 'Y-m-d H:i')</td>
     <td>
         <a class="btn btn-sm btn-primary"

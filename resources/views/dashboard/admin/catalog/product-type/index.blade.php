@@ -13,8 +13,11 @@
                     <div class="card-header">
                         <nav class="nav nav-pills flex-column flex-sm-row">
                             <span class="text-sm-center">{{ __('Product Type list') }}</span>
-                            <span class="text-sm-center ml-auto"><a class="btn btn-sm btn-primary"
-                                                                    href="{{ route('dashboard.admin.catalog.product-type.create') }}">{{ __('Create Product Type') }}</a></span>
+                            <span class="text-sm-center ml-auto">
+                                <a class="btn btn-sm btn-primary"
+                                   href="{{ route('dashboard.admin.catalog.product-type.create') }}"
+                                >{{ __('Create Product Type') }}</a>
+                            </span>
                         </nav>
                     </div>
                     <div class="card-body">

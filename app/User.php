@@ -9,7 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
+use NovaVoip\Exceptions\SupervisedTransactionException;
 use NovaVoip\Interfaces\iTransactionCollectionGenerator;
+use NovaVoip\InvoiceProcessor\FastForward;
+use function NovaVoip\supervisedTransaction;
 
 class User extends Authenticatable
 {
@@ -84,11 +87,47 @@ class User extends Authenticatable
     }
 
     /**
+     * @param float $amount
+     * @return Invoice|null
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function chargeWallet(float $amount): ?Invoice
+    {
+        $amount = round((float) $amount, 2);
+        return supervisedTransaction(function() use ($amount){
+            $invoice = new Invoice();
+            $invoice->sub_total = $amount;
+            $invoice->grand_total = $amount;
+            $invoice->tag = 'charge_wallet';
+            $invoice->can_be_paid_by_credit = false;
+            $invoice->processor = FastForward::class;
+            $invoice->client()->associate($this->client);
+            if(!$invoice->save()){
+                return null;
+            }
+
+            $invoiceItem = new InvoiceItem();
+            $invoiceItem->amount = 1;
+            $invoiceItem->price = $amount;
+            $invoiceItem->sub_total = $amount;
+            $invoiceItem->grand_total = $amount;
+            $invoiceItem->description = 'Charging wallet';
+            $invoiceItem->tag = 'charge_wallet';
+            $invoiceItem->invoice()->associate($invoice);
+            if(!$invoiceItem->save()){
+                throw new SupervisedTransactionException('Could not create invoice item');
+            }
+            return $invoice;
+        }, null, true, false);
+    }
+
+    /**
      * @return HasOne
      */
     public function client(): HasOne
     {
-        return $this->hasOne(User::class, 'user_id', 'id');
+        return $this->hasOne(Client::class, 'user_id', 'id');
     }
 
     /**
@@ -100,7 +139,7 @@ class User extends Authenticatable
      */
     public function createTransaction(iTransactionCollectionGenerator $transactionCollectionGenerator, &$insight=null): bool
     {
-        return Transaction::createTransaction($this, $transactionCollectionGenerator, $insight);
+        return Transaction::createTransaction($this, $transactionCollectionGenerator, null, $insight);
     }
 
     /**

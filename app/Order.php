@@ -16,7 +16,7 @@ class Order extends Model
     const MASK_OFFSET = 524;
     const MASK_PREFIX = 'ORD-';
 
-    protected $appends = ['order_number'];
+    protected $appends = [self::MASK_NAME];
     protected $casts = [
         'can_be_cancelled' => 'boolean',
         'can_be_invoiced' => 'boolean',
@@ -27,7 +27,7 @@ class Order extends Model
         'needs_negotiation' => 'boolean',
         'negotiated_at',
         'price_should_be_recalculated_for_new_invoice' => 'boolean',
-        ];
+    ];
     protected $dates = [
         'cached_at',
         'cancelled_at',
@@ -64,8 +64,7 @@ class Order extends Model
 
     public function canceller(): BelongsTo
     {
-        return $this->belongsTo(User::class,
-            'cancelled_by', 'id');
+        return $this->belongsTo(User::class, 'cancelled_by', 'id');
     }
 
     public function cart(): BelongsTo

@@ -96,16 +96,19 @@ function extractTranslationFromObject($dictionary, bool $isBakend = false, strin
 }
 
 /**
- * @param array|object $entity
+ * @param array|object|null $entity
  * @param string $key
  * @param string|null $translationsKey
  * @param bool $isBakend
  * @param string $default
  * @param callable|null $dictionaryGenerator
- * @return string
+ * @return string|null
  */
-function translateEntity($entity, string $key = 'name', string $translationsKey = null, bool $isBakend = false, string $default = '', callable $dictionaryGenerator=null): string
+function translateEntity($entity, string $key = 'name', string $translationsKey = null, bool $isBakend = false, string $default = '', callable $dictionaryGenerator=null): ?string
 {
+    if(is_null($entity)){
+        return null;
+    }
     $translationsKey = $translationsKey ?? ($key . '_translations');
     if (is_array($entity)) {
         $dictionary = !isset($entity[$translationsKey]) ? [] : (isset($dictionaryGenerator) ? $dictionaryGenerator($entity[$translationsKey]) : $entity[$translationsKey]);

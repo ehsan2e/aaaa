@@ -41,7 +41,7 @@ class Ticket extends Model
         self::URGENCY_URGENT,
     ];
 
-    protected $appends = ['ticket_number'];
+    protected $appends = [self::MASK_NAME];
     protected $casts = [
         'ticket_reference' => 'boolean',
         'reopened' => 'boolean',

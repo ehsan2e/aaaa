@@ -3,9 +3,13 @@
 namespace App\Providers;
 
 use App\CartItem;
+use App\Invoice;
 use App\Order;
+use App\Payment;
 use App\Policies\CartItemPolicy;
+use App\Policies\InvoicePolicy;
 use App\Policies\OrderPolicy;
+use App\Policies\PaymentPolicy;
 use App\Policies\TicketPolicy;
 use App\Ticket;
 use App\User;
@@ -21,7 +25,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         CartItem::class => CartItemPolicy::class,
+        Invoice::class => InvoicePolicy::class,
         Order::class => OrderPolicy::class,
+        Payment::class => PaymentPolicy::class,
         Ticket::class => TicketPolicy::class,
     ];
 

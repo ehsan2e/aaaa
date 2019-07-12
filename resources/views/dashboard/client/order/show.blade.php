@@ -24,17 +24,7 @@
                             </div>
                             <div class="col-lg-3 col-sm-4">
                                 <b>{{ __('Status') }}</b>
-                                @if($order->needs_negotiation)
-                                    <span>{{ __('Waiting for interview') }}</span>
-                                @elseif($order->can_be_invoiced && ($order->invoices_issued_count === 0))
-                                    <span>{{ __('Pending invoice') }}</span>
-                                @elseif($order->is_cancelled))
-                                <span>{{ __('Cancelled') }}</span>
-                                <span>@date($order->cancelled_at, 'Y-m-d H:i')</span>
-                                @elseif($order->is_paid))
-                                <span>{{ __('Paid') }}</span>
-                                <span>@date($order->paid_at, 'Y-m-d H:i')</span>
-                                @endif
+                                @component('dashboard.client.order.status', compact('order')) @endcomponent
                             </div>
                             <div class="col-lg-3 col-sm-4">
                                 <b>{{ __('Sub Total') }}</b>
@@ -61,7 +51,6 @@
                         <table class="table mt-3">
                             <thead>
                             <tr>
-                                <th></th>
                                 <th>{{ __('Item') }}</th>
                                 <th>{{ __('Amount') }}</th>
                                 <th>{{ __('Price') }}

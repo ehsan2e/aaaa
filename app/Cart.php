@@ -53,6 +53,7 @@ class Cart extends Model
             /** @var CartItem $item */
             foreach ($lockedCart->items as $item) {
                 $orderItem = new OrderItem($item->attributesToArray());
+                $orderItem->price = $item->productType->price;
                 $orderItems[$item->id] = [
                     'parent' => $item->parent_id,
                     'orderItem' => $orderItem,
