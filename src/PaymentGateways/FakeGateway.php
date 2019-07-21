@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class FakeGateway extends AbstractPaymentGateway
 {
-    protected $refernece;
+    protected $reference;
 
     protected function curl(string $endpoint, array $data=[])
     {
@@ -72,7 +72,7 @@ class FakeGateway extends AbstractPaymentGateway
      */
     public function referenceNumber(): ?string
     {
-        return $this->refernece;
+        return $this->reference;
     }
 
     /**
@@ -89,7 +89,7 @@ class FakeGateway extends AbstractPaymentGateway
         $payment->process_data = array_merge_recursive($payment->process_data, [
             'result' => $result,
         ]);
-        $this->refernece = $result->reference ?? null;
+        $this->reference = $result->reference ?? null;
         return ($result->paid ?? false) && (($result->id ?? 0) == $payment->id) && (($result->amount ?? 0.00) == $payment->amount);
     }
 }

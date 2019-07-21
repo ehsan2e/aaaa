@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StripeGateway extends AbstractPaymentGateway
 {
+    protected $reference=null;
 
     /**
      * @param Payment $payment
@@ -36,7 +37,7 @@ class StripeGateway extends AbstractPaymentGateway
      */
     public function referenceNumber(): ?string
     {
-        // TODO: Implement referenceNumber() method.
+        return $this->reference;
     }
 
     /**
@@ -70,7 +71,7 @@ class StripeGateway extends AbstractPaymentGateway
                 'receipt_url' => $charge->receipt_url,
                 'status' => $charge->status,
             ];
-            $this->refernece = $charge->id ?? null;
+            $this->reference = $charge->id ?? null;
             return $charge->status = Charge::STATUS_SUCCEEDED;
         } catch (Base $baseException) {
             $payment->process_data = [
