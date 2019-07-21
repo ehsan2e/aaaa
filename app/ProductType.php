@@ -14,6 +14,23 @@ class ProductType extends Model
 {
     use FieldLevelAccessControl;
 
+    const PERIODICITY_DAILY = 1;
+    const PERIODICITY_WEEKLY = 2;
+    const PERIODICITY_MONTHLY = 3;
+    const PERIODICITY_QUARTERLY = 4;
+    const PERIODICITY_HALF_YEARLY = 5;
+    const PERIODICITY_YEARLY = 6;
+    const PERIODICITY_LIFETIME = 7;
+    const PERIODS = [
+        self::PERIODICITY_DAILY,
+        self::PERIODICITY_WEEKLY,
+        self::PERIODICITY_MONTHLY,
+        self::PERIODICITY_QUARTERLY,
+        self::PERIODICITY_HALF_YEARLY,
+        self::PERIODICITY_YEARLY,
+        self::PERIODICITY_LIFETIME,
+    ];
+
     protected $appends = ['price'];
     protected $casts = [
         'active' => 'boolean',
@@ -24,6 +41,7 @@ class ProductType extends Model
         'in_promotion' => 'boolean',
         'imposes_pre_invoice_negotiation' => 'boolean',
         'custom_attributes' => 'array',
+        'upsell_alternatives' => 'array',
     ];
     protected $dates = ['promotion_starts_at', 'promotion_ends_at'];
 
@@ -41,7 +59,7 @@ class ProductType extends Model
 
     protected $fillable = [
         'name', 'description', 'picture', 'cost', 'original_price', 'special_price', 'supplier_sku', 'supplier_share', 'promotion_price', 'promotion_starts_at', 'promotion_ends_at', 'custom_attributes',
-        'active', 'on_sale', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation'
+        'active', 'on_sale', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation', 'periodicity', 'upsell_alternatives'
     ];
 
     protected $table = 'product_types';
@@ -142,5 +160,18 @@ class ProductType extends Model
             }
             return $instance;
         }, null, false, false);
+    }
+
+    public static function getPeriods(): array
+    {
+        return [
+            self::PERIODICITY_DAILY => __('Daily'),
+            self::PERIODICITY_WEEKLY => __('Weekly'),
+            self::PERIODICITY_MONTHLY => __('Monthly'),
+            self::PERIODICITY_QUARTERLY => __('Quarterly'),
+            self::PERIODICITY_HALF_YEARLY => __('Half yearly'),
+            self::PERIODICITY_YEARLY => __('Yearly'),
+            self::PERIODICITY_LIFETIME => __('Lifetime'),
+        ];
     }
 }

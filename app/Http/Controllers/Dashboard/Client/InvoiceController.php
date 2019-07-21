@@ -61,7 +61,7 @@ class InvoiceController extends AbstarctClientController
     protected function getSortableFields(): array
     {
         return [
-            [__('Creation Date'), 'invoices.created_at', iPaginationGenerator::SORT_DESC],
+            [__('Date'), 'invoices.created_at', iPaginationGenerator::SORT_DESC],
         ];
     }
 

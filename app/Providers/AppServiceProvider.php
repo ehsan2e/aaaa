@@ -71,7 +71,7 @@ class AppServiceProvider extends ServiceProvider
             ->add('\\App\\Http\\Controllers\\KnowledgeBaseController@displayPost', 'Post Handler');
 
         Blade::directive('someError', function ($expression) {
-            return "<?php if(array_reduce({$expression}, function(\$hasError, \$name) use (\$errors){return \$hasError || \$errors->has(\$name);}, false)): ?>";
+            return "<?php if(array_reduce({$expression}, function(\$hasError, \$name) use (\$errors){return \$hasError || (strpos(\$name, '*') === false ? \$errors->has(\$name) : (preg_match('/' . str_replace(['.', '*'], ['\\.', '\\d+'], \$name) .'/', implode('|', array_keys(\$errors->toArray()))) === 1));}, false)): ?>";
         });
         Blade::directive('endSomeError', function ($expression) {
             return '<?php endif; ?>';

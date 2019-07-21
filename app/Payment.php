@@ -21,10 +21,10 @@ class Payment extends Model
     const STATUS_IN_PROGRESS = 2;
     const STATUS_VERIFYING = 3;
     const STATUS_SUCCEED = 4;
-    const STATUS_FAILED= 5;
+    const STATUS_FAILED = 5;
     const STATUS_REJECTED = 6;
 
-    protected $appends = [self::MASK_NAME];
+    protected $appends = [self::MASK_NAME, 'status_caption'];
     protected $casts = ['information' => 'array', 'process_data' => 'array'];
     protected $fillable = ['amount', 'gateway', 'information', 'process_data', 'status', 'unique_filed', 'reference_number'];
     protected $table = 'payments';
@@ -32,6 +32,11 @@ class Payment extends Model
     public function getPaymentNumberAttribute()
     {
         return self::generateMask($this->id);
+    }
+
+    public function getStatusCaptionAttribute()
+    {
+        return self::getStatuses()[$this->status] ?? __('Unknown (:status)', ['status' => $this->status]);
     }
 
     public function invoice(): BelongsTo
@@ -48,15 +53,30 @@ class Payment extends Model
     {
         /** @var iPaymentGateway $gateway */
         $gateway = app(PaymentGatewayResolver::class)->resolve($this->gateway);
-        if(!$gateway){
+        if (!$gateway) {
             return false;
         }
 
         $result = $gateway->verify($this, $requestData);
 
-        if($result){
+        if ($result) {
             $this->reference_number = $gateway->referenceNumber();
         }
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getStatuses(): array
+    {
+        return [
+            self::STATUS_NEW => __('New'),
+            self::STATUS_IN_PROGRESS => __('In Progress'),
+            self::STATUS_VERIFYING => __('Verifying'),
+            self::STATUS_SUCCEED => __('Succeed'),
+            self::STATUS_FAILED => __('Failed'),
+            self::STATUS_REJECTED => __('Rejected'),
+        ];
     }
 }

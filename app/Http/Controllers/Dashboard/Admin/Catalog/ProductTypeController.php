@@ -134,6 +134,10 @@ class ProductTypeController extends AbstractAdminController
             'in_promotion' => ['boolean'],
             'promotion_starts_at' => ['nullable', 'date'],
             'promotion_ends_at' => ['nullable', 'date'],
+            'periodicity' => ['required', Rule::in(ProductType::PERIODS)],
+            'upsell_alternatives' => ['required', 'array', 'min:1'],
+            'upsell_alternatives.*.amount' => ['required', 'numeric'],
+            'upsell_alternatives.*.price' => ['required', 'numeric'],
         ];
         $data['tax_groups'] = $data['tax_groups'] ?? [];
         if (isset($data['category_id'])) {
@@ -205,6 +209,10 @@ class ProductTypeController extends AbstractAdminController
             'in_promotion' => ['boolean'],
             'promotion_starts_at' => ['nullable', 'date'],
             'promotion_ends_at' => ['nullable', 'date'],
+            'periodicity' => ['required', Rule::in(ProductType::PERIODS)],
+            'upsell_alternatives' => ['required', 'array', 'min:1'],
+            'upsell_alternatives.*.amount' => ['required', 'numeric'],
+            'upsell_alternatives.*.price' => ['required', 'numeric'],
         ], array_keys($partialData));
 
         $v = Validator::make([], []);

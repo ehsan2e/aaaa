@@ -152,8 +152,8 @@ return [
             [
                 'label' => __('Payments'),
                 'icon' => null,
-                'identifier' => '',
-                'href' => '#',
+                'identifier' => 'payment',
+                'href' => route('dashboard.admin.sales.payment.index'),
                 'ability' => null,
                 'children' => [],
             ],

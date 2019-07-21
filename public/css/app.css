@@ -14117,3 +14117,7 @@ a.text-dark:focus {
   background-color: #fefde5 !important;
 }
 
+tr + .no-upsell-alternative {
+  display: none;
+}
+

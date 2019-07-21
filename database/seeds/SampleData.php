@@ -82,6 +82,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 10.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => '1', 'price' => '10.00']),
                 'custom_attributes' => json_encode([
                     'ram' => 1,
                     'storage' => 30,
@@ -107,6 +109,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => '1', 'price' => '20.00']),
                 'custom_attributes' => json_encode([
                     'ram' => 2,
                     'storage' => 40,
@@ -132,6 +136,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 40.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '40.00']),
                 'custom_attributes' => json_encode([
                     'ram' => 4,
                     'storage' => 50,
@@ -157,6 +163,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 80.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '80.00']),
                 'custom_attributes' => json_encode([
                     'ram' => 8,
                     'storage' => 80,
@@ -182,6 +190,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 160.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '160.00']),
                 'custom_attributes' => json_encode([
                     'ram' => 16,
                     'storage' => 120,
@@ -207,6 +217,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 0.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '0.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => true,
                     'pre_included' => true,
@@ -224,6 +236,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 40.00,
                 'imposes_pre_invoice_negotiation' => true,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '40.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -241,6 +255,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 15.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '15.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -258,6 +274,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '20.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -275,6 +293,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '20.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -292,6 +312,8 @@ class SampleData extends Seeder
                 'stock_less' => true,
                 'original_price' => 80.00,
                 'imposes_pre_invoice_negotiation' => false,
+                'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+                'upsell_alternatives' => json_encode(['amount' => 1, 'price' => '80.00']),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,

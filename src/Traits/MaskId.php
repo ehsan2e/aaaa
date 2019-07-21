@@ -14,7 +14,7 @@ trait MaskId
 
     public function resolveRouteBinding($value)
     {
-        return $this->mask($value)->first() ?? abort(404);
+        return $this->mask($value)->first()/* ?? abort(404)*/;
     }
 
 

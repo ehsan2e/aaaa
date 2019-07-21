@@ -39,7 +39,7 @@ return [
         'label' => __('Payments'),
         'icon' => null,
         'identifier' => 'payments',
-        'href' => '#', //route('dashboard.client.payment.index'),
+        'href' => route('dashboard.client.payment.index'),
         'ability' => null,
         'children' => [],
     ],

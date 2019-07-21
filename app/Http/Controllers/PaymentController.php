@@ -28,7 +28,7 @@ class PaymentController extends Controller
             flash()->error(__('Sorry it seems that there was an error in your payment'));
         }
 
-        return redirect()->route('dashboard.client.wallet');
+        return redirect()->route('dashboard.client.payment.index');
     }
 
     /**

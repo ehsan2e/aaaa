@@ -62,6 +62,8 @@ Route::prefix('dashboard')
                         Route::post('invoice/{invoice}/pay', 'InvoiceController@pay')->name('invoice.pay');
                         Route::get('invoice/{invoice}', 'InvoiceController@show')->name('invoice.show');
 
+                        Route::get('payment', 'PaymentController@index')->name('payment.index');
+
                         Route::get('wallet/charge', 'WalletController@chargeForm')->name('wallet.charge');
                         Route::post('wallet/charge', 'WalletController@charge');
                         Route::get('wallet', 'WalletController@index')->name('wallet');
@@ -115,6 +117,9 @@ Route::prefix('dashboard')
                             ->namespace('Sales')
                             ->name('sales.')
                             ->group(function () {
+                                Route::get('payment', 'PaymentController@index')->name('payment.index');
+                                Route::get('payment/{payment}', 'PaymentController@show')->name('payment.show');
+
                                 Route::get('tax-group/{tax_group}/tax-rule', 'TaxRuleController@indexProxy')->name('tax-rule.index');
                                 Route::get('tax-group/{tax_group}/tax-rule/create', 'TaxRuleController@createProxy')->name('tax-rule.create');
                                 Route::resource('tax-group/{tax_group}/tax-rule', 'TaxRuleController', ['except' => ['index', 'create', 'show']]);
@@ -124,6 +129,7 @@ Route::prefix('dashboard')
                                 Route::get('tax-group/{tax_group}/product-type', 'TaxGroupController@productTypeIndex')
                                     ->name('tax-group.product-type.index');
                                 Route::resource('tax-group', 'TaxGroupController', ['except' => ['destroy', 'show']]);
+
                             });
                     });
 
