@@ -36,6 +36,7 @@
         }
     </style>
     @stack('additional-styles')
+    @stack('before-head-ends')
 </head>
 <body>
 <div id="app">
@@ -47,6 +48,7 @@
 <script src="{{ mix('js/manifest.js') }}"></script>
 <script src="{{ mix('js/vendor.js') }}"></script>
 <script src="{{ mix('js/app.js') }}"></script>
+@stack('after-scripts')
 <script>
     jQuery('#flash-overlay-modal').modal();
 </script>

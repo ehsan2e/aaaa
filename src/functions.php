@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use NovaVoip\Exceptions\SupervisedTransactionException;
+use NovaVoip\Helpers\SuperVisedTransactionExecuter;
 
 function sortedLanguages(): array
 {
@@ -37,7 +38,7 @@ function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow
         DB::transaction(function () use ($fn, $result) {
             $result->succeed = $fn($result->bag);
         });
-        return $result->succeed;
+        return is_a($result->succeed, SuperVisedTransactionExecuter::class) ? $result->succeed(): $result->succeed;
     } catch (QueryException | SupervisedTransactionException $xException) {
         $result->bag->normal = false;
         $result->bag->premtionType = get_class($xException);
@@ -46,7 +47,7 @@ function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow
         if ($rethrow) {
             throw $xException;
         }
-        return $errorResult;
+        return is_a($errorResult, SuperVisedTransactionExecuter::class)? $errorResult(): $errorResult;
     } catch (Exception $exception) {
         $result->bag->normal = false;
         $result->bag->premtionType = SupervisedTransactionException::class;
@@ -55,7 +56,7 @@ function supervisedTransaction(callable $fn, $errorResult = false, bool $rethrow
         if (!$silent) {
             throw $exception;
         }
-        return $errorResult;
+        return is_a($errorResult, SuperVisedTransactionExecuter::class)? $errorResult(): $errorResult;
     } finally {
         $insight = $result->bag;
     }

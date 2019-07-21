@@ -13,7 +13,7 @@
                                 @if($invoice->payable())
                                     <a class="btn btn-sm btn-success" data-toggle="modal" data-target="#paymentModal"
                                        href = "{{ route('dashboard.client.invoice.pay', compact('invoice')) }}"
-                                       data-can-use-credit="{{ $item->can_be_paid_by_credit ? 'yes' : 'no' }}"
+                                       data-can-use-credit="{{ $invoice->can_be_paid_by_credit ? 'yes' : 'no' }}"
                                     >{{ __('Pay Invoice') }}</a>
                                 @endif
                                 <a class="btn btn-sm btn-primary"

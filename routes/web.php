@@ -168,6 +168,8 @@ Route::prefix('payment')
     ->group(function () {
         Route::get('forward/{payment}', 'PaymentController@forward')->name('forward');
         Route::match(['get', 'post'], 'call-back/{payment}', 'PaymentController@callback')->name('callback');
+
+        Route::get('stripe/{payment}', 'StripeController@showForm')->name('stripe');
     });
 
 Route::fallback('HomeController@fallback');

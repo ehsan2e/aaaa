@@ -7,6 +7,7 @@ use App\Invoice;
 use App\Payment;
 use Illuminate\Support\Facades\Auth;
 use NovaVoip\Exceptions\SupervisedTransactionException;
+use NovaVoip\Helpers\SuperVisedTransactionExecuter;
 use NovaVoip\Interfaces\iPaymentGateway;
 use Symfony\Component\HttpFoundation\Response;
 use function NovaVoip\supervisedTransaction;
@@ -49,6 +50,6 @@ abstract class AbstractPaymentGateway implements iPaymentGateway
                 throw new SupervisedTransactionException('Could not update payment');
             }
             return $response;
-        }, $this->paymentNotPossible(), false, false);
+        }, new SuperVisedTransactionExecuter(function(){return $this->paymentNotPossible();}), false, false);
     }
 }
