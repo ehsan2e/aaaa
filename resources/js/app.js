@@ -21,6 +21,7 @@ window.Vue = require('vue');
 
 Vue.component('attribute-set-component', require('./components/AttributeSetComponent.vue').default);
 Vue.component('attribute-component', require('./components/AttributeComponent.vue').default);
+Vue.component('box-monitor-component', require('./components/BoxMonitorComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

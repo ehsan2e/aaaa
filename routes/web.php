@@ -129,7 +129,13 @@ Route::prefix('dashboard')
                                 Route::get('tax-group/{tax_group}/product-type', 'TaxGroupController@productTypeIndex')
                                     ->name('tax-group.product-type.index');
                                 Route::resource('tax-group', 'TaxGroupController', ['except' => ['destroy', 'show']]);
+                            });
 
+                        Route::prefix('system')
+                            ->namespace('System')
+                            ->name('system.')
+                            ->group(function () {
+                                Route::get('box-monitor', 'BoxMonitorController@index')->name('box-monitor.index');
                             });
                     });
 

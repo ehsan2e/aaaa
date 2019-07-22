@@ -26,4 +26,5 @@ return [
     'recaptcha_url' => env('RECAPTCHA_URL', 'https://www.google.com/recaptcha/api/siteverify'),
     'stripe_publishable_key' =>env('STRIPE_PUBLISHABLE_KEY'),
     'stripe_secret_key' => env('STRIPE_SECRET_KEY'),
+    'ws_url' => env('WS_URL', '/'),
 ];
