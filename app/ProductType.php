@@ -31,6 +31,14 @@ class ProductType extends Model
         self::PERIODICITY_LIFETIME,
     ];
 
+    const TYPE_SIMPLE = 1;
+    const TYPE_CONFIGURABLE = 2;
+    const TYPES = [
+        self::TYPE_SIMPLE,
+        self::TYPE_CONFIGURABLE,
+    ];
+
+
     protected $appends = ['price'];
     protected $casts = [
         'active' => 'boolean',
@@ -172,6 +180,14 @@ class ProductType extends Model
             self::PERIODICITY_HALF_YEARLY => __('Half yearly'),
             self::PERIODICITY_YEARLY => __('Yearly'),
             self::PERIODICITY_LIFETIME => __('Lifetime'),
+        ];
+    }
+
+    public static function getTypes(): array
+    {
+        return [
+            self::TYPE_SIMPLE => __('Simple'),
+            self::TYPE_CONFIGURABLE => __('Configurable'),
         ];
     }
 }

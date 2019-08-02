@@ -11,7 +11,7 @@
                             <span class="text-sm-center">{{ __('Create Product') }}</span>
                             <span class="text-sm-center ml-auto">
                                 <a class="btn btn-sm btn-primary"
-                                   href="{{ route('dashboard.admin.cms.post.index') }}">{{ __('Back') }}</a>
+                                   href="{{ route('dashboard.admin.catalog.product-type.index') }}">{{ __('Back') }}</a>
                             </span>
                         </nav>
                     </div>
@@ -27,11 +27,14 @@
                                 @endslot
                                 {{ __('Category') }}
                             @endcomponent
+                            @component('dashboard.components.select', ['name' => 'type', 'model' => $productType ?? null, 'items' => $types])
+                                {{ __('Type') }}
+                            @endcomponent
 
                             <div class="form-group row mb-0">
                                 <div class="col-md-6 offset-md-4">
                                     <button type="submit" class="btn btn-primary">
-                                        {{ __('Select Category') }}
+                                        {{ __('Next') }}
                                     </button>
                                 </div>
                             </div>

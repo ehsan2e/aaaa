@@ -106,6 +106,8 @@ class ProductCategoryController extends AbstractAdminController
      * @param  \Illuminate\Http\Request $request
      * @param  \App\ProductCategory $productCategory
      * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
      */
     public function update(Request $request, ProductCategory $productCategory)
     {

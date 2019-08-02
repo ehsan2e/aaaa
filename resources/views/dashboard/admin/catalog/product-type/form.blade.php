@@ -96,11 +96,13 @@
                             <tr>
                                 <th>{{ __('Amount') }}</th>
                                 <th>{{ __('Price') }}</th>
+                                <th>{{ __('Cost') }}</th>
+                                <th>{{ __('Supplier Share') }}</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
-                            @foreach(old('upsell_alternatives',$productType->upsell_alternatives ?? [['amount' => '1', 'price' => '']]) as  $c => $upsellAlternative)
+                            @foreach(old('upsell_alternatives',$productType->upsell_alternatives ?? [['amount' => '1', 'price' => '', 'cost' => '', 'supplier_share' => '']]) as  $c => $upsellAlternative)
                                 <tr>
                                     <td>
                                         <input type="text" class="form-control  @error('upsell_alternatives.' . $c .'.amount') is-invalid @enderror"
@@ -114,6 +116,22 @@
                                         name="upsell_alternatives[{{$loop->index}}][price]"
                                                value="{{ $upsellAlternative['price'] }}"
                                                @if($loop->index === 0) id="minimum-amount-price" @endif
+                                        >
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control @error('upsell_alternatives.' . $c .'.cost') is-invalid @enderror"
+                                               @if($loop->index === 0) readonly @endif
+                                        name="upsell_alternatives[{{$loop->index}}][cost]"
+                                               value="{{ $upsellAlternative['cost'] }}"
+                                               @if($loop->index === 0) id="minimum-amount-cost" @endif
+                                        >
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control @error('upsell_alternatives.' . $c .'.supplier_share') is-invalid @enderror"
+                                               @if($loop->index === 0) readonly @endif
+                                        name="upsell_alternatives[{{$loop->index}}][supplier_share]"
+                                               value="{{ $upsellAlternative['supplier_share'] }}"
+                                               @if($loop->index === 0) id="minimum-amount-supplier_share" @endif
                                         >
                                     </td>
                                     <td>
@@ -212,6 +230,8 @@
                 cnt++
                 html = '<tr><td><input type="text" class="form-control" name="upsell_alternatives[' + j + '][amount]"></td>' +
                     '<td><input type="text" class="form-control" name="upsell_alternatives[' + j + '][price]"></td>' +
+                    '<td><input type="text" class="form-control" name="upsell_alternatives[' + j + '][cost]"></td>' +
+                    '<td><input type="text" class="form-control" name="upsell_alternatives[' + j + '][supplier_share]"></td>' +
                     '<td><button type="button" class="btn btn-danger btn-sm remove-upsell-alternative" title="{{ __('Remove') }}" data-toggle="tooltip"><i class="fa fa-remove"></i></button></td></tr>';
                 $upsellAlternativeTable.find('tbody').append(html)
             });
@@ -225,11 +245,17 @@
                 } else {
                     $('#period-price').show();
                 }
-            })
+            });
             $('#original_price, #special_price').on('keyup', function () {
                 var originalPrice = $('#original_price').val();
                 var specialPrice = $('#special_price').val();
                 $('#minimum-amount-price').val(specialPrice == '' ? originalPrice : specialPrice);
+            });
+            $('#cost').on('keyup', function () {
+                $('#minimum-amount-cost').val($(this).val());
+            });
+            $('#supplier_share').on('keyup', function () {
+                $('#minimum-amount-supplier_share').val($(this).val());
             });
         })(jQuery)
     </script>

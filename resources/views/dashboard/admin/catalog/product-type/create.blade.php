@@ -6,10 +6,10 @@
         <div class="card">
             <div class="card-header">
                 <nav class="nav nav-pills flex-column flex-sm-row">
-                    <span class="text-sm-center">{{ __('Create Product') }}</span>
+                    <span class="text-sm-center">{{ __('Create Simple Product') }}</span>
                     <span class="text-sm-center ml-auto">
                         <a class="btn btn-sm btn-primary"
-                           href="{{ route('dashboard.admin.catalog.product-type.index') }}">{{ __('Back') }}</a>
+                           href="{{ route('dashboard.admin.catalog.product-type.create') }}">{{ __('Back') }}</a>
                     </span>
                 </nav>
             </div>

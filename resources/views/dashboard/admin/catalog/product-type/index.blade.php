@@ -2,6 +2,12 @@
     \App\Facades\UIManager::setActivePath('catalog', \Illuminate\Support\Facades\Request::query('category_code', 'any-product') . '-category');
     $filteredActive = \Illuminate\Support\Facades\Request::query('active', '');
     $filteredCategory = \Illuminate\Support\Facades\Request::query('category', '');
+    if($filteredCategory === ''){
+        $filteredCategoryCode = \Illuminate\Support\Facades\Request::query('category_code', '');
+        if($filteredCategoryCode !== ''){
+            $filteredCategory = array_filter($productCategories->toArray(), function($productCategory) use ($filteredCategoryCode){ return $productCategory['code'] === $filteredCategoryCode;})[0]['id'] ?? '';
+        }
+    }
 @endphp
 @extends('layouts.dashboard')
 

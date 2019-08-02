@@ -50,7 +50,7 @@ class ProductTypeController extends AbstractAdminController
     protected function getIndexPageData(): array
     {
         return [
-            'productCategories' => ProductCategory::select('id', 'name')->orderBy('name')->get()
+            'productCategories' => ProductCategory::select('id', 'code', 'name')->orderBy('name')->get(),
         ];
     }
 
@@ -64,9 +64,20 @@ class ProductTypeController extends AbstractAdminController
         ];
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    protected function preCreate()
+    {
+        $productCategories = ProductCategory::select('id', 'name')->get();
+        $types = ProductType::getTypes();
+        return view('dashboard.admin.catalog.product-type.pre-create', compact('productCategories', 'types'));
+    }
+
     protected function prePaginationRender(iPaginationGenerator $paginationGenerator): iPaginationGenerator
     {
         return $paginationGenerator->bindQueryParamFilter('category', 'product_types.category_id')
+            ->bindQueryParamFilter('category_code', 'product_categories.code')
             ->bindQueryParamFilter('active', ['filter' => 'product_types.active', 'cast' => PaginationGenerator::getCast(PaginationGenerator::CAST_BOOLEAN)]);
     }
 
@@ -90,15 +101,24 @@ class ProductTypeController extends AbstractAdminController
      */
     public function create()
     {
+        $type = \Illuminate\Support\Facades\Request::query('type');
+        if((!$type) || (!in_array($type, ProductType::TYPES))){
+            return $this->preCreate();
+        }
+
         $categoryId = \Illuminate\Support\Facades\Request::query('category');
-        if ((!$categoryId) && \Illuminate\Support\Facades\Request::has('category')) {
-            return parent::create();
+        if (\Illuminate\Support\Facades\Request::has('category') && isset($categoryId) && (!($productCategory = ProductCategory::find($categoryId)))) {
+            return $this->preCreate();
         }
-        if ((!$categoryId) || (!($productCategory = ProductCategory::find($categoryId)))) {
-            $productCategories = ProductCategory::select('id', 'name')->get();
-            return view('dashboard.admin.catalog.product-type.category-selection', compact('productCategories'));
+
+        switch ($type){
+            case ProductType::TYPE_SIMPLE:
+                return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.create', $this->dashboardPrefix, $this->getViewBasePath()), compact('productCategory', 'type'));
+                break;
+            case ProductType::TYPE_CONFIGURABLE:
+                dd(__FILE__, __LINE__);
+                break;
         }
-        return $this->renderForm(sprintf($this->viewPath ?? 'dashboard.admin.%s.create', $this->getViewBasePath()), compact('productCategory'));
     }
 
     /**
@@ -106,6 +126,8 @@ class ProductTypeController extends AbstractAdminController
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
      */
     public function store(Request $request)
     {
@@ -138,6 +160,8 @@ class ProductTypeController extends AbstractAdminController
             'upsell_alternatives' => ['required', 'array', 'min:1'],
             'upsell_alternatives.*.amount' => ['required', 'numeric'],
             'upsell_alternatives.*.price' => ['required', 'numeric'],
+            'upsell_alternatives.*.cost' => ['nullable', 'numeric'],
+            'upsell_alternatives.*.supplier_share' => ['nullable', 'numeric'],
         ];
         $data['tax_groups'] = $data['tax_groups'] ?? [];
         if (isset($data['category_id'])) {
@@ -213,6 +237,8 @@ class ProductTypeController extends AbstractAdminController
             'upsell_alternatives' => ['required', 'array', 'min:1'],
             'upsell_alternatives.*.amount' => ['required', 'numeric'],
             'upsell_alternatives.*.price' => ['required', 'numeric'],
+            'upsell_alternatives.*.cost' => ['nullable', 'numeric'],
+            'upsell_alternatives.*.supplier_share' => ['nullable', 'numeric'],
         ], array_keys($partialData));
 
         $v = Validator::make([], []);
