@@ -10,7 +10,7 @@
                data-toggle="pill"
                href="#product-general" role="tab" aria-controls="product-general"
                aria-selected="true">@someError(['category_id', 'sku', 'name', 'description', 'picture', 'active',
-                'on_sale']) <i class="fa fa-warning text-danger"></i> @endSomeError {{ __('General') }}</a>
+                'on_sale', 'appears_in_listing']) <i class="fa fa-warning text-danger"></i> @endSomeError {{ __('General') }}</a>
             <a class="nav-link  @if($activeTab === 'product-supplier') active @endif" id="product-supplier-tab"
                data-toggle="pill"
                href="#product-supplier" role="tab" aria-controls="product-supplier"
@@ -48,20 +48,23 @@
             <div class="tab-pane fade @if($activeTab === 'product-general') show active @endif" id="product-general"
                  role="tabpanel"
                  aria-labelledby="product-general-tab">
+                <input type="hidden" name="type" value="{{ $type }}">
                 @if(isset($productCategory))
                     <input type="hidden" name="category_id" value="{{ $productCategory->id }}">
                     @error('category_id')
                     <div class="alert alert-danger" role="alert">{{ $message }}</div>
                     @enderror
                 @endif
-                @component('dashboard.components.readonly-text', ['name' => 'category_name', 'model' => $productType ?? null, 'defaultValue' => $productCategory->name ?? __('Without category')]){{ __('Product Category') }}@endcomponent
+                @component('dashboard.components.readonly-text', ['name' => 'category_name', 'defaultValue' => $productCategory->name ?? __('Without category')]){{ __('Product Category') }}@endcomponent
+                @component('dashboard.components.readonly-text', ['name' => 'type_name', 'defaultValue' => $types[$type] ]){{ __('Type') }}@endcomponent
                 @component('dashboard.components.' . (isset($productType) ? 'readonly-text' : 'input-box'), ['name' => 'sku', 'model' => $productType ?? null]){{ __('SKU') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'name', 'model' => $productType ?? null]){{ __('Name') }}@endcomponent
                 @component('dashboard.components.textarea', ['name' => 'description', 'model' => $productType ?? null]){{ __('Description') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'picture', 'model' => $productType ?? null]){{ __('Picture') }}@endcomponent
-                @component('dashboard.components.check-box', ['name' => 'active', 'model' => $productType ?? null]){{ __('Active') }}@endcomponent
+                @component('dashboard.components.check-box', ['name' => 'active', 'model' => $productType ?? null, 'default' => true]){{ __('Active') }}@endcomponent
                 @component('dashboard.components.check-box', ['name' => 'imposes_pre_invoice_negotiation', 'model' => $productType ?? null]){{ __('Impose Pre Invoice negotiation') }}@endcomponent
-                @component('dashboard.components.check-box', ['name' => 'on_sale', 'model' => $productType ?? null]){{ __('On Sale') }}@endcomponent
+                @component('dashboard.components.check-box', ['name' => 'on_sale', 'model' => $productType ?? null, 'default' => true]){{ __('On Sale') }}@endcomponent
+                @component('dashboard.components.check-box', ['name' => 'appears_in_listing', 'model' => $productType ?? null, 'default' => true]){{ __('Appears in lists') }}@endcomponent
             </div>
             <div class="tab-pane fade @if($activeTab === 'product-supplier') show active @endif" id="product-supplier"
                  role="tabpanel"

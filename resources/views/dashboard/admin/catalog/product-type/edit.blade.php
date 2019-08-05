@@ -6,7 +6,8 @@
         <div class="card">
             <div class="card-header">
                 <nav class="nav nav-pills flex-column flex-sm-row">
-                    <span class="text-sm-center">{{ __('Edit Simple Product') }}</span>
+                    <span class="text-sm-center">{{ __('Edit :type Product', ['type' => $types[$type]]) }}</span>
+
                     <span class="text-sm-center ml-auto">
                         <a class="btn btn-sm btn-primary"
                            href="{{ route('dashboard.admin.catalog.product-type.index') }}">{{ __('Back') }}</a>
@@ -15,9 +16,9 @@
             </div>
             <div class="card-body">
                 <form action="{{ route('dashboard.admin.catalog.product-type.update', ['productType' => $productType]) }}"
-                      method="post">
+                      method="post" id="product-type-form">
                     @method('PUT')
-                    @include('dashboard.admin.catalog.product-type.form')
+                    @include('dashboard.admin.catalog.product-type.form-' . $slugs[$type])
                     <hr>
                     <div class="clearfix">
                         <div class="pull-right">

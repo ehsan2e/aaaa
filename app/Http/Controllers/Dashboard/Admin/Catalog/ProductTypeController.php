@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use NovaVoip\Helpers\PaginationGenerator;
 use NovaVoip\Interfaces\iPaginationGenerator;
+use function NovaVoip\translateEntity;
 
 class ProductTypeController extends AbstractAdminController
 {
@@ -51,6 +52,7 @@ class ProductTypeController extends AbstractAdminController
     {
         return [
             'productCategories' => ProductCategory::select('id', 'code', 'name')->orderBy('name')->get(),
+            'types' => ProductType::getTypes(),
         ];
     }
 
@@ -78,6 +80,7 @@ class ProductTypeController extends AbstractAdminController
     {
         return $paginationGenerator->bindQueryParamFilter('category', 'product_types.category_id')
             ->bindQueryParamFilter('category_code', 'product_categories.code')
+            ->bindQueryParamFilter('type', 'product_types.type')
             ->bindQueryParamFilter('active', ['filter' => 'product_types.active', 'cast' => PaginationGenerator::getCast(PaginationGenerator::CAST_BOOLEAN)]);
     }
 
@@ -111,14 +114,29 @@ class ProductTypeController extends AbstractAdminController
             return $this->preCreate();
         }
 
+        $types = ProductType::getTypes();
+        $slugs = ProductType::getTypeSlugs();
+        $typeSpecificData = [];
         switch ($type){
-            case ProductType::TYPE_SIMPLE:
-                return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.create', $this->dashboardPrefix, $this->getViewBasePath()), compact('productCategory', 'type'));
-                break;
             case ProductType::TYPE_CONFIGURABLE:
-                dd(__FILE__, __LINE__);
+                $configurableAttributes = ['name' => __('Name')];
+                if(isset($productCategory)){
+                    foreach($productCategory->custom_attributes ?? [] as $customAttribute){
+                        $configurableAttributes[$customAttribute['name']] = translateEntity($customAttribute, 'caption', 'captions', true);
+                    }
+                }
+                $categoryProductsQuery = ProductType::select(['id', 'sku', 'name'])->where('type', ProductType::TYPE_SIMPLE);
+                if(isset($productCategory)){
+                    $categoryProductsQuery->where('category_id', $productCategory->id);
+                }else{
+                    $categoryProductsQuery->whereNull('category_id');
+
+                }
+                $categoryProducts = $categoryProductsQuery->get();
+                $typeSpecificData = compact('configurableAttributes', 'categoryProducts');
                 break;
         }
+        return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.create', $this->dashboardPrefix, $this->getViewBasePath()), $typeSpecificData + compact('productCategory', 'type', 'types', 'slugs'));
     }
 
     /**
@@ -131,10 +149,28 @@ class ProductTypeController extends AbstractAdminController
      */
     public function store(Request $request)
     {
+        switch ($request->type) {
+            case ProductType::TYPE_SIMPLE:
+                return $this->storeSimpleProduct($request);
+        }
+        dd(__FILE__, __LINE__, $request->all());
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function storeSimpleProduct(Request $request)
+    {
         $data = $request->all();
         $v = Validator::make([], []);
         $rules = [
             'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
+            'type' => ['required', Rule::in(ProductType::TYPES)],
             'sku' => ['required', Rule::unique('product_types')],
             'name' => ['required'],
             'description' => [],
@@ -142,6 +178,7 @@ class ProductTypeController extends AbstractAdminController
             'active' => ['boolean'],
             'imposes_pre_invoice_negotiation' => ['boolean'],
             'on_sale' => ['boolean'],
+            'appears_in_listing' => ['boolean'],
             'supplier_id' => ['nullable', (new ExistingModel('suppliers'))->setMessage(__('Select a valid supplier'))],
             'supplier_sku' => [],
             'supplier_share' => ['nullable', 'numeric'],
@@ -192,12 +229,16 @@ class ProductTypeController extends AbstractAdminController
      *
      * @param  \App\ProductType $productType
      * @return \Illuminate\Http\Response
+     * @throws \ErrorException
      */
     public function edit(ProductType $productType)
     {
         $productCategory = $productType->category;
         $productType->load(['taxGroups']);
-        return $this->renderForm('dashboard.admin.catalog.product-type.edit', compact('productType', 'productCategory'));
+        $type = $productType->type;
+        $types = ProductType::getTypes();
+        $slugs = ProductType::getTypeSlugs();
+        return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.edit', $this->dashboardPrefix, $this->getViewBasePath()), compact('productType', 'productCategory', 'type', 'types', 'slugs'));
     }
 
     /**
@@ -211,15 +252,34 @@ class ProductTypeController extends AbstractAdminController
      */
     public function update(Request $request, ProductType $productType)
     {
+        switch ($productType->type) {
+            case ProductType::TYPE_SIMPLE:
+                return $this->updateSimpleProduct($request, $productType);
+        }
+        dd('oh');
+    }
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\ProductType $productType
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function updateSimpleProduct(Request $request, ProductType $productType)
+    {
         $partialData = $productType->preparePartialData(Auth::user(), $request->except(['_method', '_token']));
         $rules = Arr::only([
             'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
+            'type' => ['required', Rule::in(ProductType::TYPES)],
             'name' => ['required'],
             'description' => [],
             'picture' => [],
             'active' => ['boolean'],
             'imposes_pre_invoice_negotiation' => ['boolean'],
             'on_sale' => ['boolean'],
+            'appears_in_listing' => ['boolean'],
             'supplier_id' => ['nullable', (new ExistingModel('suppliers'))->setMessage(__('Select a valid supplier'))],
             'supplier_sku' => [],
             'supplier_share' => ['nullable', 'numeric'],

@@ -4,6 +4,7 @@ namespace NovaVoip\Traits;
 
 
 use App\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -30,6 +31,20 @@ trait FieldLevelAccessControl
             }
         }
         return $fields;
+    }
+
+    /**
+     * @param array $data
+     * @param Model|null $instance
+     * @param array|null $booleanFields
+     */
+    public function prepareBooleanFields(array $data, Model $instance=null, array $booleanFields=null)
+    {
+        $instance = $instance ?? $this;
+        $booleanFields = $booleanFields ?? $this->getBooleanFields();
+        array_walk($booleanFields, function ($name) use ($data, $instance) {
+            $instance->{$name} = isset($data[$name]);
+        });
     }
 
     public function preparePartialData(User $user, array $data): array

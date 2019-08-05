@@ -1,5 +1,6 @@
 <tr>
     <td>{{ $item->id }}</td>
+    <td>{{ $item->type_caption }}</td>
     <td>{{ $item->sku }}</td>
     <td>{{ $item->name }}</td>
     <td>{{ $item->category_name ?? '-' }}</td>

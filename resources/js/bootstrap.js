@@ -14,6 +14,8 @@ try {
     window.ClipboardJS = require('clipboard/dist/clipboard');
     require('tinymce');
     require('chosen-js');
+    require( 'datatables.net' );
+    require('datatables.net-bs4');
 } catch (e) {
 }
 

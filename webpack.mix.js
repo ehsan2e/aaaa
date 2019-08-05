@@ -14,7 +14,7 @@ const mix = require('laravel-mix');
 const production = process.env.NODE_ENV === 'production';
 
 mix.js('resources/js/app.js', 'public/js')
-    .extract(['axios', 'vue'])
+    .extract(['axios', 'vue', 'datatables.net'])
     .sass('resources/sass/app.scss', 'public/css');
 if (production) {
     mix.version();

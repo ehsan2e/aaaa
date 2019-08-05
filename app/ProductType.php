@@ -39,10 +39,11 @@ class ProductType extends Model
     ];
 
 
-    protected $appends = ['price'];
+    protected $appends = ['price', 'type_caption'];
     protected $casts = [
         'active' => 'boolean',
         'on_sale' => 'boolean',
+        'appears_in_listing' => 'boolean',
         'stock_less' => 'boolean',
         'allow_back_order' => 'boolean',
         'show_out_of_stock' => 'boolean',
@@ -50,6 +51,7 @@ class ProductType extends Model
         'imposes_pre_invoice_negotiation' => 'boolean',
         'custom_attributes' => 'array',
         'upsell_alternatives' => 'array',
+        'complex_settings' => 'array',
     ];
     protected $dates = ['promotion_starts_at', 'promotion_ends_at'];
 
@@ -67,7 +69,7 @@ class ProductType extends Model
 
     protected $fillable = [
         'name', 'description', 'picture', 'cost', 'original_price', 'special_price', 'supplier_sku', 'supplier_share', 'promotion_price', 'promotion_starts_at', 'promotion_ends_at', 'custom_attributes',
-        'active', 'on_sale', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation', 'periodicity', 'upsell_alternatives'
+        'active', 'on_sale', 'appears_in_listing', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation', 'periodicity', 'upsell_alternatives'
     ];
 
     protected $table = 'product_types';
@@ -77,9 +79,19 @@ class ProductType extends Model
         return self::calculatePrice($this);
     }
 
+    public function getTypeCaptionAttribute()
+    {
+        return self::getTypes()[$this->type] ?? __('Unknown (:type)', ['type' => $this->type]);
+    }
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+    }
+
+    public function complexProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'complex_product_type_members', 'simple_product_type_id', 'complex_product_type_id', 'id', 'id');
     }
 
     public function creator(): BelongsTo
@@ -122,6 +134,11 @@ class ProductType extends Model
         return false;
     }
 
+    public function simpleProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'complex_product_type_members', 'complex_product_type_id', 'simple_product_type_id', 'id', 'id');
+    }
+
     public function supplier(): BelongsTo
     {
         return $this->belongsTo(Supplier::class, 'supplier_id', 'id');
@@ -152,11 +169,9 @@ class ProductType extends Model
     {
         return supervisedTransaction(function () use ($creator, $data): ?ProductType {
             $instance = new self($data);
+            $instance->type = self::TYPE_SIMPLE;
             $instance->sku = $data['sku'];
-            $booleanFields = $instance->getBooleanFields();
-            array_walk($booleanFields, function ($name) use ($data, $instance) {
-                $instance->{$name} = isset($data[$name]);
-            });
+            $instance->prepareBooleanFields($data);
             $instance->category_id = $data['category_id'] ?? null;
             $instance->supplier_id = $data['supplier_id'] ?? null;
             $instance->creator()->associate($creator);
@@ -188,6 +203,14 @@ class ProductType extends Model
         return [
             self::TYPE_SIMPLE => __('Simple'),
             self::TYPE_CONFIGURABLE => __('Configurable'),
+        ];
+    }
+
+    public static function getTypeSlugs(): array
+    {
+        return [
+            self::TYPE_SIMPLE => 'simple',
+            self::TYPE_CONFIGURABLE => 'configurable',
         ];
     }
 }

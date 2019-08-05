@@ -8,6 +8,7 @@
             $filteredCategory = array_filter($productCategories->toArray(), function($productCategory) use ($filteredCategoryCode){ return $productCategory['code'] === $filteredCategoryCode;})[0]['id'] ?? '';
         }
     }
+    $filteredType = \Illuminate\Support\Facades\Request::query('type', '');
 @endphp
 @extends('layouts.dashboard')
 
@@ -29,7 +30,7 @@
                     <div class="card-body">
                         @component('dashboard.components.pagination', [
                             'collection' => $productTypes,
-                            'columnTitles' => [__('ID'),__('SKU'),__('Name'),__('Category'),__('Price'),__('Category'),__('Supplier'),__('Supplier SKU'),__('Active'),__('Actions')],
+                            'columnTitles' => [__('ID'),__('Type'),__('SKU'),__('Name'),__('Category'),__('Price'),__('Category'),__('Supplier'),__('Supplier SKU'),__('Active'),__('Actions')],
                             'id' => $listId ?? 'product-type',
                             'searchBoxConfig' => [
                                 'canRunRawQuery' => $canRunRawQuery ?? false,
@@ -50,11 +51,16 @@
                         @endslot
                         @slot('extraControls')
                             <div class="row">
-                                <div class="col-lg-6">
+                                <div class="col-lg-4">
                                     <span>{{ __('Active') }}</span>
                                     @component('dashboard.components.option', ['name' => 'active', 'value'=>'', 'selectedValue' => $filteredActive, 'inline' => true, 'type' => 'single-choice']){{ __('all') }}@endcomponent
                                     @component('dashboard.components.option', ['name' => 'active', 'value'=>'1', 'selectedValue' => $filteredActive, 'inline' => true, 'type' => 'single-choice']){{ __('active') }}@endcomponent
                                     @component('dashboard.components.option', ['name' => 'active', 'value'=>'0', 'selectedValue' => $filteredActive, 'inline' => true, 'type' => 'single-choice']){{ __('inactive') }}@endcomponent
+                                </div>
+                                <div class="col-lg-4">
+                                    @component('dashboard.components.select', ['name' => 'type', 'defaultValue' => $filteredType, 'items' => $types, 'empty' => __('All types')])
+                                        {{ __('Type') }}
+                                    @endcomponent
                                 </div>
                             </div>
                         @endslot
