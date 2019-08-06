@@ -1,5 +1,5 @@
 @php
-    $activeTab = $activeTab ?? 'product-related-products';
+    $activeTab = $activeTab ?? 'product-general';
 @endphp
 @csrf
 <div class="row">
@@ -15,14 +15,15 @@
             <a class="nav-link @if($activeTab === 'product-settings') active @endif" id="product-settings-tab"
                data-toggle="pill"
                href="#product-settings" role="tab" aria-controls="product-settings"
-               aria-selected="true">@someError(['complex_settings.configurable_attributes']) <i
+               aria-selected="true">@someError(['complex_settings.configurable_attributes',
+                'complex_settings.configurable_attributes.*']) <i
                         class="fa fa-warning text-danger"></i> @endSomeError {{ __('Settings') }}</a>
-            <a class="nav-link @if($activeTab === 'product-related-products') active @endif"
-               id="product-related-products-tab"
+            <a class="nav-link @if($activeTab === 'product-simple-products') active @endif"
+               id="product-simple-products-tab"
                data-toggle="pill"
-               href="#product-related-products" role="tab" aria-controls="product-related-products"
-               aria-selected="true">@someError(['related_products', 'default_product']) <i
-                        class="fa fa-warning text-danger"></i> @endSomeError {{ __('Related Products') }}</a>
+               href="#product-simple-products" role="tab" aria-controls="product-simple-products"
+               aria-selected="true">@someError(['simple_products', 'default_product']) <i
+                        class="fa fa-warning text-danger"></i> @endSomeError {{ __('Simple Products') }}</a>
             @if(isset($productCategory))
                 <a class="nav-link  @if($activeTab === 'product-custom-attributes') active @endif"
                    id="product-custom-attributes-tab" data-toggle="pill"
@@ -47,8 +48,8 @@
                     <div class="alert alert-danger" role="alert">{{ $message }}</div>
                     @enderror
                 @endif
-                @component('dashboard.components.readonly-text', ['name' => 'category_name', 'model' => $productType ?? null, 'defaultValue' => $productCategory->name ?? __('Without category')]){{ __('Product Category') }}@endcomponent
-                @component('dashboard.components.readonly-text', ['name' => 'type_name', 'model' => $productType ?? null, 'defaultValue' => $productCategory->name ?? __('Without category')]){{ __('Type') }}@endcomponent
+                @component('dashboard.components.readonly-text', ['name' => 'category_name', 'defaultValue' => $productCategory->name ?? __('Without category')]){{ __('Product Category') }}@endcomponent
+                @component('dashboard.components.readonly-text', ['name' => 'type_name', 'defaultValue' => $types[$type] ]){{ __('Type') }}@endcomponent
                 @component('dashboard.components.' . (isset($productType) ? 'readonly-text' : 'input-box'), ['name' => 'sku', 'model' => $productType ?? null]){{ __('SKU') }}@endcomponent
                 @component('dashboard.components.input-box', ['name' => 'name', 'model' => $productType ?? null]){{ __('Name') }}@endcomponent
                 @component('dashboard.components.textarea', ['name' => 'description', 'model' => $productType ?? null]){{ __('Description') }}@endcomponent
@@ -61,20 +62,25 @@
             <div class="tab-pane fade @if($activeTab === 'product-settings') show active @endif" id="product-settings"
                  role="tabpanel"
                  aria-labelledby="product-settings-tab">
-                @component('dashboard.components.select', ['name' => 'complex_settings[configurable_attributes][]', 'model' => $productType->complex_settings ?? null, 'modelKey' => 'configurable_attributes', 'multiple' => true])
+                @component('dashboard.components.select', ['name' => 'complex_settings[configurable_attributes]', 'model' => $productType->complex_settings ?? null, 'modelKey' => 'configurable_attributes', 'multiple' => true])
                     @slot('options')
                         @foreach($configurableAttributes as $configurableAttributeValue => $configurableAttributeLabel)
-                            @component('dashboard.components.option', ['value'=>$configurableAttributeValue, 'selectedValue' => old('complex_settings.configurable_attributes', $productType->complex_settings['configurable_attributes'] ?? [])]){{ $configurableAttributeLabel }}@endcomponent
+                            @component('dashboard.components.option', ['value'=>$configurableAttributeValue, 'selectedValue' => old('complex_settings.configurable_attributes', is_null(old('_token'))? ($productType->complex_settings['configurable_attributes'] ?? []): [])]){{ $configurableAttributeLabel }}@endcomponent
                         @endforeach
                     @endslot
                     {{ __('Configurable Attributes') }}
                 @endcomponent
             </div>
-            <div class="tab-pane fade @if($activeTab === 'product-related-products') show active @endif"
-                 id="product-related-products"
+            <div class="tab-pane fade @if($activeTab === 'product-simple-products') show active @endif"
+                 id="product-simple-products"
                  role="tabpanel"
                  aria-labelledby="product-settings-tab">
-                <table id="related-products-table" class="table table-striped" style="width: 100%">
+                @error('simple_products')
+                <span class="invalid-feedback" role="alert" style="display: block">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+                <table id="simple-products-table" class="table table-striped" style="width: 100%">
                     <thead>
                     <tr>
                         <td><i class="fa fa-square-o"></i></td>
@@ -88,11 +94,15 @@
                     @foreach($categoryProducts as $categoryProduct)
                         <tr>
                             <td>
-                                <input type="checkbox" name="related_products[]" value="{{ $categoryProduct->id }}">
+                                <input type="checkbox" name="simple_products[]" value="{{ $categoryProduct->id }}"
+                                       @if(in_array($categoryProduct->id, old('simple_products', $simpleProducts ?? []))) checked @endif>
                             </td>
                             <td>
                                 <input type="radio" name="complex_settings[default_product]"
-                                       value="{{ $categoryProduct->id }}">
+                                       value="{{ $categoryProduct->id }}"
+                                       @if($categoryProduct->id == old('complex_settings.default_product', $productType->complex_settings['default_product'] ?? '')))
+                                       checked @endif
+                                >
                             </td>
                             <td>{{ $categoryProduct->id }}</td>
                             <td>{{ $categoryProduct->sku }}</td>
@@ -144,7 +154,7 @@
     <script>
         (function ($) {
             var lastSelectedRadio = '';
-            var table = jQuery('#related-products-table').DataTable({
+            var table = jQuery('#simple-products-table').DataTable({
                 columnDefs: [
                     {targets: [0, 1], searchable: false, orderable: false},
                 ],
@@ -158,7 +168,7 @@
             table.$('input[type=radio]').on('click', function (event) {
                 var $me = $(this);
                 var $checkbox = $me.closest('tr').find('input[type=checkbox');
-                if(($checkbox.length === 0) || ($checkbox.prop('checked') === false)){
+                if (($checkbox.length === 0) || ($checkbox.prop('checked') === false)) {
                     event.preventDefault();
                     return;
                 }
@@ -177,7 +187,7 @@
                 var $radio = $me.closest('tr').find('input[type=radio');
                 var old = $radio.prop('checked');
                 $radio.prop('checked', $me.prop('checked') && old);
-                if($radio.prop('checked') !== old){
+                if ($radio.prop('checked') !== old) {
                     $radio.change();
                 }
                 $radio = null;

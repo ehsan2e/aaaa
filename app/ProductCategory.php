@@ -2,6 +2,7 @@
 
 namespace App;
 
+use function foo\func;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -18,6 +19,26 @@ class ProductCategory extends Model
     protected $table = 'product_categories';
 
     /**
+     * @return string
+     */
+    public function getChildrenAddress(): string
+    {
+        return (isset($this->address) ? $this->address : '-') . $this->id . '-';
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfigurableAttributes(): array
+    {
+        $configurableAttributes = self::getCommonConfigurableAttributes();
+        foreach ($this->custom_attributes ?? [] as $customAttribute) {
+            $configurableAttributes[$customAttribute['name']] = translateEntity($customAttribute, 'caption', 'captions', true);
+        }
+        return $configurableAttributes;
+    }
+
+    /**
      * @param bool $isBackend
      * @param string $prefix
      * @return array
@@ -25,7 +46,7 @@ class ProductCategory extends Model
     public function getCustomAttributeCaptions(bool $isBackend = false, string $prefix = 'custom_attributes.'): array
     {
         $captions = [];
-        foreach ($this->custom_attributes as $customAttribute){
+        foreach ($this->custom_attributes as $customAttribute) {
             $captions[$prefix . $customAttribute['name']] = translateEntity($customAttribute, 'caption', 'captions', $isBackend);
         }
         return $captions;
@@ -48,7 +69,7 @@ class ProductCategory extends Model
             } else {
                 $r[] = 'nullable';
             }
-            switch ($customAttribute['type']){
+            switch ($customAttribute['type']) {
                 case'price':
                 case'decimal':
                     $r[] = 'numeric';
@@ -57,21 +78,15 @@ class ProductCategory extends Model
                     $r[] = 'integer';
                     break;
                 case 'lookup':
-                    $r[] = 'in:' . array_reduce($customAttribute['lookupValues'] ?? [], function($values, $lookupValue){ return $values . ($values === '' ? '' : ',') . $lookupValue['value'];}, '');
+                    $r[] = 'in:' . array_reduce($customAttribute['lookupValues'] ?? [], function ($values, $lookupValue) {
+                            return $values . ($values === '' ? '' : ',') . $lookupValue['value'];
+                        }, '');
                     break;
             }
             $rules[$prefix . $customAttribute['name']] = $r;
         }
         return $rules;
 
-    }
-
-    /**
-     * @return stirng
-     */
-    public function getChildrenAddress(): string
-    {
-        return (isset($this->address) ? $this->address : '-') . $this->id . '-';
     }
 
     public function parentCategory(): BelongsTo
@@ -83,7 +98,6 @@ class ProductCategory extends Model
     {
         return $this->hasMany(ProductType::class, 'category_id', 'id');
     }
-
 
     /**
      * @param array $data
@@ -138,6 +152,7 @@ class ProductCategory extends Model
         }, false, false, false, $insight);
     }
 
+
     /**
      * @param array $data
      * @param $insight
@@ -188,38 +203,46 @@ class ProductCategory extends Model
     }
 
     /**
+     * @return array
+     */
+    public static function getCommonConfigurableAttributes(): array
+    {
+        return ['name' => __('Name')];
+    }
+
+    /**
      * @param array $data
      * @return array
      */
     public function parseCustomAttributes(array $data): array
     {
         $result = [];
-        foreach ($this->custom_attributes as $customAttribute){
-            if(!array_key_exists($customAttribute['name'], $data)){
-                if($customAttribute['type'] === 'boolean'){
+        foreach ($this->custom_attributes as $customAttribute) {
+            if (!array_key_exists($customAttribute['name'], $data)) {
+                if ($customAttribute['type'] === 'boolean') {
                     $result[$customAttribute['name']] = false;
-                }elseif (isset($customAttribute['default'])){
+                } elseif (isset($customAttribute['default'])) {
                     $result[$customAttribute['name']] = $customAttribute['default'];
                 }
                 continue;
             }
-            if((!isset($data[$customAttribute['name']])) && in_array($customAttribute['type'], ['price', 'decimal', 'integer'])){
+            if ((!isset($data[$customAttribute['name']])) && in_array($customAttribute['type'], ['price', 'decimal', 'integer'])) {
                 $result[$customAttribute['name']] = null;
                 continue;
             }
-            switch($customAttribute['type']){
+            switch ($customAttribute['type']) {
                 case'price':
                 case'decimal':
-                    $result[$customAttribute['name']] = (float) $data[$customAttribute['name']];
+                    $result[$customAttribute['name']] = (float)$data[$customAttribute['name']];
                     break;
                 case'integer':
-                    $result[$customAttribute['name']] = (int) $data[$customAttribute['name']];
+                    $result[$customAttribute['name']] = (int)$data[$customAttribute['name']];
                     break;
                 case 'boolean':
-                    $result[$customAttribute['name']] = (bool) $data[$customAttribute['name']];
+                    $result[$customAttribute['name']] = (bool)$data[$customAttribute['name']];
                     break;
                 default:
-                    $result[$customAttribute['name']] = (string) $data[$customAttribute['name']];
+                    $result[$customAttribute['name']] = (string)$data[$customAttribute['name']];
             }
         }
 

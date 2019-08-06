@@ -69,10 +69,30 @@ class ProductType extends Model
 
     protected $fillable = [
         'name', 'description', 'picture', 'cost', 'original_price', 'special_price', 'supplier_sku', 'supplier_share', 'promotion_price', 'promotion_starts_at', 'promotion_ends_at', 'custom_attributes',
-        'active', 'on_sale', 'appears_in_listing', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation', 'periodicity', 'upsell_alternatives'
+        'active', 'on_sale', 'appears_in_listing', 'stock_less', 'allow_back_order', 'show_out_of_stock', 'in_promotion', 'imposes_pre_invoice_negotiation', 'periodicity', 'upsell_alternatives', 'complex_settings'
     ];
 
     protected $table = 'product_types';
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function complexProducts(): BelongsToMany
+    {
+        return $this->belongsToMany(self::class, 'complex_product_type_members', 'simple_product_type_id', 'complex_product_type_id', 'id', 'id');
+    }
+
+    public function editor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'edited_by', 'id');
+    }
 
     public function getPriceAttribute()
     {
@@ -82,26 +102,6 @@ class ProductType extends Model
     public function getTypeCaptionAttribute()
     {
         return self::getTypes()[$this->type] ?? __('Unknown (:type)', ['type' => $this->type]);
-    }
-
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(ProductCategory::class, 'category_id', 'id');
-    }
-
-    public function complexProducts(): BelongsToMany
-    {
-        return $this->belongsToMany(self::class, 'complex_product_type_members', 'simple_product_type_id', 'complex_product_type_id', 'id', 'id');
-    }
-
-    public function creator(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'created_by', 'id');
-    }
-
-    public function editor(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'edited_by', 'id');
     }
 
     public function isOnPromotion(): bool
@@ -149,6 +149,28 @@ class ProductType extends Model
         return $this->belongsToMany(TaxGroup::class, 'product_type_tax_groups', 'product_type_id', 'tax_group_id', 'id', 'id');
     }
 
+    /**
+     * @param User $editor
+     * @param array $data
+     * @return bool
+     * @throws SupervisedTransactionException
+     * @throws \Exception
+     */
+    public function updateInfo(User $editor, array $data): bool
+    {
+        return supervisedTransaction(function() use ($editor, $data) {
+            $instance = $this;
+            $instance->fill($data);
+            $instance->prepareBooleanFields($data);
+            $instance->editor()->associate($editor);
+            if (!$instance->save()) {
+                return false;
+            }
+            $instance->simpleProducts()->sync($data['simple_products']);
+            return true;
+        }, false, false, false);
+    }
+
 
     public static function calculatePrice(Model $productType)
     {
@@ -165,7 +187,30 @@ class ProductType extends Model
      * @throws SupervisedTransactionException
      * @throws \Exception
      */
-    public static function createNewProductType(User $creator, array $data): ?ProductType
+    public static function createNewConfigurableProductType(User $creator, array $data): ?ProductType
+    {
+        return supervisedTransaction(function () use ($creator, $data): ?ProductType {
+            $instance = new self($data);
+            $instance->type = self::TYPE_CONFIGURABLE;
+            $instance->prepareBooleanFields($data);
+            $instance->category_id = $data['category_id'] ?? null;
+            $instance->creator()->associate($creator);
+            if (!$instance->save()) {
+                return null;
+            }
+            $instance->simpleProducts()->sync($data['simple_products']);
+            return $instance;
+        }, null, false, false);
+    }
+
+    /**
+     * @param User $creator
+     * @param array $data
+     * @return ProductType|null
+     * @throws SupervisedTransactionException
+     * @throws \Exception
+     */
+    public static function createNewSimpleProductType(User $creator, array $data): ?ProductType
     {
         return supervisedTransaction(function () use ($creator, $data): ?ProductType {
             $instance = new self($data);

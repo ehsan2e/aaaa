@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard\Admin\Catalog;
 use App\Http\Controllers\Dashboard\Admin\AbstractAdminController;
 use App\ProductCategory;
 use App\ProductType;
+use App\Rules\ConfigurableProductSimpleProducts;
 use App\Rules\ExistingModel;
 use App\Supplier;
 use App\TaxGroup;
@@ -110,6 +111,7 @@ class ProductTypeController extends AbstractAdminController
         }
 
         $categoryId = \Illuminate\Support\Facades\Request::query('category');
+        /** @var ProductCategory $productCategory */
         if (\Illuminate\Support\Facades\Request::has('category') && isset($categoryId) && (!($productCategory = ProductCategory::find($categoryId)))) {
             return $this->preCreate();
         }
@@ -119,12 +121,7 @@ class ProductTypeController extends AbstractAdminController
         $typeSpecificData = [];
         switch ($type){
             case ProductType::TYPE_CONFIGURABLE:
-                $configurableAttributes = ['name' => __('Name')];
-                if(isset($productCategory)){
-                    foreach($productCategory->custom_attributes ?? [] as $customAttribute){
-                        $configurableAttributes[$customAttribute['name']] = translateEntity($customAttribute, 'caption', 'captions', true);
-                    }
-                }
+                $configurableAttributes = isset($productCategory)? $productCategory->getConfigurableAttributes() : ProductCategory::getCommonConfigurableAttributes();
                 $categoryProductsQuery = ProductType::select(['id', 'sku', 'name'])->where('type', ProductType::TYPE_SIMPLE);
                 if(isset($productCategory)){
                     $categoryProductsQuery->where('category_id', $productCategory->id);
@@ -149,11 +146,69 @@ class ProductTypeController extends AbstractAdminController
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'type' => ['required', Rule::in(ProductType::TYPES)]
+        ]);
         switch ($request->type) {
             case ProductType::TYPE_SIMPLE:
                 return $this->storeSimpleProduct($request);
+            case ProductType::TYPE_CONFIGURABLE:
+                return $this->storeConfigurableProduct($request);
         }
-        dd(__FILE__, __LINE__, $request->all());
+        flash()->error(__('Invalid or missing product type'));
+        return back()->withInput();
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function storeConfigurableProduct(Request $request)
+    {
+        $data = $request->all();
+        $v = Validator::make([], []);
+        /** @var ProductCategory|null $productCategory */
+        $productCategory = isset($request->category_id) ? ProductCategory::find($request->category_id) : null;
+        $configurableAttributes = isset($productCategory) ? $productCategory->getConfigurableAttributes() : ProductCategory::getCommonConfigurableAttributes();
+        $rules = [
+            'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
+            'sku' => ['required', Rule::unique('product_types')],
+            'name' => ['required'],
+            'description' => [],
+            'picture' => [],
+            'active' => ['boolean'],
+            'imposes_pre_invoice_negotiation' => ['boolean'],
+            'on_sale' => ['boolean'],
+            'appears_in_listing' => ['boolean'],
+            'complex_settings.configurable_attributes' => ['required', 'array', 'min:1'],
+            'complex_settings.configurable_attributes.*' => [Rule::in(array_keys($configurableAttributes))],
+            'simple_products' => ['required', new ConfigurableProductSimpleProducts($request->category_id, $request->complex_settings['default_product'] ?? null)],
+        ];
+        if (isset($data['category_id'])) {
+            /** @var ProductCategory $productCategory */
+            $productCategory = ProductCategory::find($data['category_id']);
+            $rules += $productCategory->getCustomAttributeValidationRules();
+            $v->setAttributeNames($productCategory->getCustomAttributeCaptions(true));
+            if (isset($data['custom_attributes'])) {
+                $data['custom_attributes'] = $productCategory->parseCustomAttributes($data['custom_attributes']);
+            }
+        }
+        $v->setData($data);
+        $v->setRules($rules);
+        if ($v->fails()) {
+            return back()->withInput()->withErrors($v);
+        }
+        if (ProductType::createNewConfigurableProductType(Auth::user(), $data)) {
+            flash()->success(__('Product type :name was created successfully', ['name' => $data['name']]));
+            return redirect()->route('dashboard.admin.catalog.product-type.index');
+        }
+
+        flash()->error(__('An unknown error happened please try again later'));
+        return back()->withInput();
     }
 
     /**
@@ -170,7 +225,6 @@ class ProductTypeController extends AbstractAdminController
         $v = Validator::make([], []);
         $rules = [
             'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
-            'type' => ['required', Rule::in(ProductType::TYPES)],
             'sku' => ['required', Rule::unique('product_types')],
             'name' => ['required'],
             'description' => [],
@@ -215,7 +269,7 @@ class ProductTypeController extends AbstractAdminController
         if ($v->fails()) {
             return back()->withInput()->withErrors($v);
         }
-        if (ProductType::createNewProductType(Auth::user(), $data)) {
+        if (ProductType::createNewSimpleProductType(Auth::user(), $data)) {
             flash()->success(__('Product type :name was created successfully', ['name' => $data['name']]));
             return redirect()->route('dashboard.admin.catalog.product-type.index');
         }
@@ -238,7 +292,23 @@ class ProductTypeController extends AbstractAdminController
         $type = $productType->type;
         $types = ProductType::getTypes();
         $slugs = ProductType::getTypeSlugs();
-        return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.edit', $this->dashboardPrefix, $this->getViewBasePath()), compact('productType', 'productCategory', 'type', 'types', 'slugs'));
+        $typeSpecificData = [];
+        switch ($type){
+            case ProductType::TYPE_CONFIGURABLE:
+                $configurableAttributes = isset($productCategory)? $productCategory->getConfigurableAttributes() : ProductCategory::getCommonConfigurableAttributes();
+                $categoryProductsQuery = ProductType::query()->select(['id', 'sku', 'name'])->where('type', ProductType::TYPE_SIMPLE);
+                if(isset($productCategory)){
+                    $categoryProductsQuery->where('category_id', $productCategory->id);
+                }else{
+                    $categoryProductsQuery->whereNull('category_id');
+
+                }
+                $categoryProducts = $categoryProductsQuery->get();
+                $simpleProducts = $productType->simpleProducts()->select(['product_types.id'])->pluck('id')->toArray();
+                $typeSpecificData = compact('configurableAttributes', 'categoryProducts', 'simpleProducts');
+                break;
+        }
+        return $this->renderForm(sprintf($this->viewPath ?? '%s.%s.edit', $this->dashboardPrefix, $this->getViewBasePath()), $typeSpecificData + compact('productType', 'productCategory', 'type', 'types', 'slugs'));
     }
 
     /**
@@ -255,12 +325,63 @@ class ProductTypeController extends AbstractAdminController
         switch ($productType->type) {
             case ProductType::TYPE_SIMPLE:
                 return $this->updateSimpleProduct($request, $productType);
+            case ProductType::TYPE_CONFIGURABLE:
+                return $this->updateConfigurableProduct($request, $productType);
         }
-        dd('oh');
+        flash()->error(__('Invalid or missing product type'));
+        return back()->withInput();
     }
     /**
-     * Update the specified resource in storage.
-     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \App\ProductType $productType
+     * @return \Illuminate\Http\Response
+     * @throws \Exception
+     * @throws \NovaVoip\Exceptions\SupervisedTransactionException
+     */
+    public function updateConfigurableProduct(Request $request, ProductType $productType)
+    {
+        $data = $request->all();
+        $v = Validator::make([], []);
+        /** @var ProductCategory|null $productCategory */
+        $productCategory = isset($request->category_id) ? ProductCategory::find($request->category_id) : null;
+        $configurableAttributes = isset($productCategory) ? $productCategory->getConfigurableAttributes() : ProductCategory::getCommonConfigurableAttributes();
+        $rules = [
+            'category_id' => ['nullable', (new ExistingModel('product_categories'))->setMessage(__('Select a valid category'))],
+            'sku' => ['required', Rule::unique('product_types')->ignore($productType->id)],
+            'name' => ['required'],
+            'description' => [],
+            'picture' => [],
+            'active' => ['boolean'],
+            'imposes_pre_invoice_negotiation' => ['boolean'],
+            'on_sale' => ['boolean'],
+            'appears_in_listing' => ['boolean'],
+            'complex_settings.configurable_attributes' => ['required', 'array', 'min:1'],
+            'complex_settings.configurable_attributes.*' => [Rule::in(array_keys($configurableAttributes))],
+            'simple_products' => ['required', new ConfigurableProductSimpleProducts($request->category_id, $request->complex_settings['default_product'] ?? null)],
+        ];
+        if (isset($data['category_id'])) {
+            /** @var ProductCategory $productCategory */
+            $productCategory = ProductCategory::find($data['category_id']);
+            $rules += $productCategory->getCustomAttributeValidationRules();
+            $v->setAttributeNames($productCategory->getCustomAttributeCaptions(true));
+            if (isset($data['custom_attributes'])) {
+                $data['custom_attributes'] = $productCategory->parseCustomAttributes($data['custom_attributes']);
+            }
+        }
+        $v->setData($data);
+        $v->setRules($rules);
+        if ($v->fails()) {
+            return back()->withInput()->withErrors($v);
+        }
+        if ($productType->updateInfo(Auth::user(), $data)) {
+            flash()->success(__('Product type :name was updated successfully', ['name' => $data['name']]));
+            return redirect()->route('dashboard.admin.catalog.product-type.index');
+        }
+
+        flash()->error(__('An unknown error happened please try again later'));
+        return back()->withInput();
+    }
+    /**
      * @param  \Illuminate\Http\Request $request
      * @param  \App\ProductType $productType
      * @return \Illuminate\Http\Response
@@ -299,7 +420,7 @@ class ProductTypeController extends AbstractAdminController
             'upsell_alternatives.*.price' => ['required', 'numeric'],
             'upsell_alternatives.*.cost' => ['nullable', 'numeric'],
             'upsell_alternatives.*.supplier_share' => ['nullable', 'numeric'],
-        ], array_keys($partialData));
+        ], array_keys(Arr::dot($partialData)));
 
         $v = Validator::make([], []);
         if (isset($productType->category_id)) {

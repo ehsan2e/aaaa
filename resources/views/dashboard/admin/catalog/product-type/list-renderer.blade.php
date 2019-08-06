@@ -5,7 +5,9 @@
     <td>{{ $item->name }}</td>
     <td>{{ $item->category_name ?? '-' }}</td>
     <td>
-        @if($item->price === $item->original_price)
+        @if($item->type == \App\ProductType::TYPE_CONFIGURABLE)
+            -
+        @elseif($item->price === $item->original_price)
             {{ $item->price }}
         @else
             <span class="text-danger" style="text-decoration: line-through">{{ $item->original_price }}</span>

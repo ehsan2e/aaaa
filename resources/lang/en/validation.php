@@ -160,6 +160,8 @@ return [
         'custom_attributes.*.lookupValues' => 'values',
         'custom_attributes.*.lookupValues.*.caption' => 'caption',
         'custom_attributes.*.lookupValues.*.value' => 'value',
+        'complex_settings.configurable_attributes' => 'configurable attributes',
+        'complex_settings.configurable_attributes.*' => 'configurable attribute',
     ],
 
 
@@ -172,4 +174,6 @@ return [
     'lookup_value_unknown' => 'something is wrong',
     'lookup_value_duplicate_caption' => 'more than one lookup value share :caption as their caption',
     'lookup_value_duplicate_value' => 'more than one lookup value share :value as their value',
+    'configurable_product_default_simple_products' => 'default simple product should be one of the associated simple products',
+    'configurable_product_simple_products' => 'simple products should be from the same category',
 ];
