@@ -1,6 +1,7 @@
 <tr>
     <td>{{ $item->id }}</td>
     <td>{{ $item->payment_number }}</td>
+    <td>{{ $item->user_name }}</td>
     <td>{{ $item->gateway }}</td>
     <td>{{ $item->amount }}</td>
     <td>{{ $item->reference_number ?? '-' }}</td>

@@ -30,16 +30,19 @@ class PaymentController extends AbstractAdminController
      */
     protected function getBuilder(): Builder
     {
-        return Payment::query();
+        return Payment::query()
+            ->leftJoin('users', 'users.id', '=', 'payments.user_id')
+            ->select(['payments.*', 'users.name as user_name']);
     }
 
     protected function getSearchableFields(): array
     {
         return [
-            'id',
-            'amount',
-            'gateway',
-            'reference_number',
+            'payments.id',
+            'payments.amount',
+            'payments.gateway',
+            'payments.reference_number',
+            'users.name',
             function (Builder $query, string $q) {
                 if (($orderId = Payment::decryptMask($q)) !== null) {
                     $query->where('payments.id', $orderId);

@@ -34,7 +34,7 @@
         <span v-for="(item, index) in attributeList" :key="index">
             <input type="hidden" :name="'custom_attributes['+index+'][name]'" :value="item.name">
             <input type="hidden" :name="'custom_attributes['+index+'][caption]'" :value="item.caption">
-            <input type="hidden" :name="'custom_attributes['+index+'][required]'" value="on" v-if="item.required">
+            <input type="hidden" :name="'custom_attributes['+index+'][required]'" value="1" v-if="item.required">
             <input type="hidden" :name="'custom_attributes['+index+'][type]'" :value="item.type">
             <template v-for="(itemc, indexc) in item.captions">
                 <input type="hidden" :name="'custom_attributes['+index+'][captions]['+indexc+']'" :value="itemc">

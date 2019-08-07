@@ -1,5 +1,4 @@
 @csrf
-
 @component('dashboard.components.select', ['name' => 'parent_id', 'model' => $productCategory ?? null, 'autofocus' => true])
     @slot('options')
         <option value="">{{ __('Without parent') }}</option>

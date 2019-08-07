@@ -71,6 +71,11 @@ abstract class AbstractDashboardController extends Controller
      */
     abstract protected function getBuilder(): Builder;
 
+    protected function getCastingClass(): ?string
+    {
+        return null;
+    }
+
     /**
      * @return array
      */
@@ -153,7 +158,8 @@ abstract class AbstractDashboardController extends Controller
             ->view(sprintf($this->viewPath ?? '%s.%s.index', $this->dashboardPrefix, $this->getViewBasePath()))
             ->setCollectionName($this->collectionName)
             ->setSearchableFields($this->getSearchableFields())
-            ->setOrder($this->getSortableFields(), $this->orderByField, $this->sortDirectionField);
+            ->setOrder($this->getSortableFields(), $this->orderByField, $this->sortDirectionField)
+            ->cast($this->getCastingClass());
         return $this->prePaginationRender($paginationGenerator)->render($this->getIndexPageData());
     }
 

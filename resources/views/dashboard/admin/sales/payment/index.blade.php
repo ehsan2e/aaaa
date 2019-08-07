@@ -18,7 +18,7 @@
                     <div class="card-body">
                         @component('dashboard.components.pagination', [
                             'collection' => $payments,
-                            'columnTitles' => [__('ID'), __('Payment Number'), __('Gateway'), __('Amount'), __('Reference Number'), __('Status'),__('Date'), __('Action')],
+                            'columnTitles' => [__('ID'), __('Payment Number'), __('User'), __('Gateway'), __('Amount'), __('Reference Number'), __('Status'),__('Date'), __('Action')],
                             'id' => 'payment',
                             'searchBoxConfig' => [
                                 'canRunRawQuery' => $canRunRawQuery ?? false,

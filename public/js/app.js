@@ -50024,7 +50024,7 @@ var render = function() {
                   attrs: {
                     type: "hidden",
                     name: "custom_attributes[" + index + "][required]",
-                    value: "on"
+                    value: "1"
                   }
                 })
               : _vm._e(),

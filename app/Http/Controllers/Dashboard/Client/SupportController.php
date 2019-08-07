@@ -46,6 +46,11 @@ class SupportController extends AbstarctClientController
             ->orderBy('ticket_followers.ticket_id', 'desc');
     }
 
+    protected function getCastingClass(): ?string
+    {
+        return Ticket::class;
+    }
+
     protected function getSearchableFields(): array
     {
         return [

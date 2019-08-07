@@ -23,19 +23,12 @@ class TicketFollower extends Pivot
         self::CONCERN_ASSIGNEE,
     ];
 
-    protected $appends = ['ticket_number'];
     protected $casts = [
         'following' => 'boolean',
     ];
     protected $fillable = ['concern', 'following', 'interactions', 'updated_at'];
     protected $table = 'ticket_followers';
     public $timestamps = false;
-
-
-    public function getTicketNumberAttribute()
-    {
-        return Ticket::generateTicketNumber($this->ticket_id);
-    }
 
     public function ticket(): BelongsTo
     {

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Cart;
 use App\Facades\CustomUrlHandler;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Request;
@@ -45,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('date', function ($expression) {
             list($date, $format) = array_pad(explode(',', $expression), 2, null);
             $format = $format ?? '\'Y-m-d\'';
-            return "<?php echo {$date}->format({$format}) ?>";
+            return "<?php {$date} = is_string({$date}) ? Carbon\Carbon::createFromTimestamp(strtotime({$date})) : {$date}; echo {$date}->format({$format}) ?>";
         });
         Blade::directive('priceOrFreeOfCharge', function ($expression) {
             return "<?php echo ({$expression} > 0) ? ((1 * {$expression}) . (\$systemCurrencyCode ?? config('nova.currency_code'))) : e(__('Free of Charge')) ?>";
