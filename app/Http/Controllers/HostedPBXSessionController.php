@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 
 use App\Cart;
 use App\CartItem;
+use App\ProductType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use NovaVoip\Helpers\Box;
 use NovaVoip\Helpers\BoxService;
@@ -61,7 +63,11 @@ class HostedPBXSessionController extends Controller
             $currentBox['box_services'] = $cartItem->children()->pluck('id')->toArray();
         }
         $boxes = Box::flattenedBoxes();
-        $boxServices = BoxService::load();
+        $boxServices = BoxService::load(true, [ProductType::TYPE_SIMPLE, ProductType::TYPE_CONFIGURABLE], function(Builder $query){
+            $query->with(['simpleProducts' => function($q){
+                $q->where('active', true);
+            }]);
+        });
         $employeeNumber = (int)old('employee_number', '1');
         $box = Box::resolveBox($employeeNumber);
         return view('hosted-pbx-session.configure-box', compact('box', 'boxes', 'boxServices', 'currentBox'));

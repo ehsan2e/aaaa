@@ -78,6 +78,24 @@
                                 @foreach($boxServices as $boxService)
                                     @continue(!($boxService->custom_attributes['pre_included'] || $boxService->custom_attributes['mandatory']))
                                     <div class="mb-2 ml-3">
+                                        @if($boxService->type == \App\ProductType::TYPE_CONFIGURABLE)
+                                            <div class="row">
+                                                <div class="col-lg-3 col-md-4">{{ $boxService->name }}</div>
+                                                <div class="col-lg-9 col-md-8">
+                                                    <select name="box_services[]" class="form-control">
+                                                        @unless($boxService->custom_attributes['mandatory'])
+                                                            <option>{{ __('Select one if you want') }}</option>
+                                                        @endunless
+                                                        @foreach($boxService->simpleProducts as $simpleProduct)
+                                                            <option value="{{ $simpleProduct->id }}"
+                                                                @if($simpleProduct->id == ($boxService->complex_settings['default_product'] ?? -1)) selected @endif
+                                                            >{{ $simpleProduct->name }} - @priceOrFreeOfCharge($simpleProduct->price)</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                            </div>
+                                        @else
                                         <label>
                                             @unless($boxService->custom_attributes['mandatory'])
                                                 <input type="checkbox" name="box_services[]" value="{{ $boxService->id }}"
@@ -94,6 +112,7 @@
                                                 @priceOrFreeOfCharge($boxService->price)
                                             @endif
                                         </label>
+                                        @endif
                                     </div>
                                 @endforeach
                                 <p class="mt-2">

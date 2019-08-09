@@ -26,20 +26,20 @@ class Box
      * @throws \Exception
      * @throws \NovaVoip\Exceptions\SupervisedTransactionException
      */
-    public static function addToCart(Cart $cart, int $employeeNumber, string $adminPassword, string $domain, array $boxServices=[], CartItem $originalItem=null): bool
+    public static function addToCart(Cart $cart, int $employeeNumber, string $adminPassword, string $domain, array $boxServices = [], CartItem $originalItem = null): bool
     {
-        return supervisedTransaction(function () use ($cart, $employeeNumber, $adminPassword, $domain, $boxServices, $originalItem): bool{
-            if($originalItem){
+        return supervisedTransaction(function () use ($cart, $employeeNumber, $adminPassword, $domain, $boxServices, $originalItem): bool {
+            if ($originalItem) {
                 $originalItem->delete();
             }
             /** @var Cart $lockedCart */
             $lockedCart = Cart::openForModification()->lockForUpdate()->find($cart->id);
-            if(!$lockedCart){
+            if (!$lockedCart) {
                 return false;
             }
 
             $box = self::resolveBox($employeeNumber);
-            if(!$box){
+            if (!$box) {
                 return false;
             }
 
@@ -55,14 +55,14 @@ class Box
                 'include_in_calculations' => true
             ]);
             $boxCartItem->productType()->associate($box);
-            if(!$lockedCart->items()->save($boxCartItem)){
+            if (!$lockedCart->items()->save($boxCartItem)) {
                 return false;
             }
             $services = BoxService::load();
             $serviceCartItems = [];
             /** @var ProductType $service */
-            foreach ($services as $service){
-                if($service->custom_attributes['mandatory'] || in_array($service->id, $boxServices)){
+            foreach ($services as $service) {
+                if ($service->custom_attributes['mandatory'] || in_array($service->id, $boxServices)) {
                     $serviceCartItem = new CartItem([
                         'amount' => 1,
                         'can_be_edited' => false,
@@ -80,12 +80,14 @@ class Box
     }
 
     /**
+     * @param bool $onlyActives
+     * @param array|null $types
      * @return array
      */
-    public static function flattenedBoxes(): array
+    public static function flattenedBoxes(bool $onlyActives = true, array $types = null, callable $fn = null): array
     {
         if (!self::$boxes) {
-            $boxes = self::load()->map(function (ProductType $box) {
+            $boxes = self::load($onlyActives, $types, $fn)->map(function (ProductType $box) {
                 return [
                     'id' => $box->id,
                     'max_employee' => $box->custom_attributes['max_employee'] ?? null,
@@ -111,17 +113,26 @@ class Box
 
     /**
      * @param bool $onlyActives
+     * @param array|null $types
+     * @param callable|null $fn
      * @return Collection
      */
-    public static function load(bool $onlyActives = true): Collection
+    public static function load(bool $onlyActives = true, array $types = null, callable $fn = null): Collection
     {
         /** @var Builder $categorySubQuery */
-        $categorySubQuery = ProductCategory::query()->select('id')->where('code', config('nova.box_category_code'));
+        $categorySubQuery = ProductCategory::query()->select('id')
+            ->where('code', config('nova.box_category_code'))
+            ->where('appears_in_listing', true);
         /** @var Builder $query */
         $query = ProductType::query()->whereIn('category_id', $categorySubQuery);
         if ($onlyActives) {
             $query->where('active', true);
-
+        }
+        if (isset($types)) {
+            $query->whereIn('type', $types);
+        }
+        if(isset($fn)){
+            $fn($query);
         }
         return $query->get();
     }
@@ -132,8 +143,8 @@ class Box
      */
     public static function resolveBox(int $employeeNumber): ?ProductType
     {
-        foreach (self::flattenedBoxes() as $b){
-            if(is_null($b['max_employee']) || ($employeeNumber <= $b['max_employee'])){
+        foreach (self::flattenedBoxes() as $b) {
+            if (is_null($b['max_employee']) || ($employeeNumber <= $b['max_employee'])) {
                 return ProductType::find($b['id']);
             }
         }

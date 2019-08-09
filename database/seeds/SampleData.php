@@ -83,7 +83,7 @@ class SampleData extends Seeder
                 'original_price' => 10.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => '1', 'price' => '10.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => '1', 'price' => '10.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'ram' => 1,
                     'storage' => 30,
@@ -110,7 +110,7 @@ class SampleData extends Seeder
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => '1', 'price' => '20.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => '1', 'price' => '20.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'ram' => 2,
                     'storage' => 40,
@@ -137,7 +137,7 @@ class SampleData extends Seeder
                 'original_price' => 40.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '40.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '40.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'ram' => 4,
                     'storage' => 50,
@@ -164,7 +164,7 @@ class SampleData extends Seeder
                 'original_price' => 80.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '80.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '80.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'ram' => 8,
                     'storage' => 80,
@@ -191,7 +191,7 @@ class SampleData extends Seeder
                 'original_price' => 160.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '160.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '160.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'ram' => 16,
                     'storage' => 120,
@@ -218,7 +218,7 @@ class SampleData extends Seeder
                 'original_price' => 0.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '0.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '0.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => true,
                     'pre_included' => true,
@@ -237,7 +237,7 @@ class SampleData extends Seeder
                 'original_price' => 40.00,
                 'imposes_pre_invoice_negotiation' => true,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '40.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '40.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -256,7 +256,7 @@ class SampleData extends Seeder
                 'original_price' => 15.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '15.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '15.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -275,7 +275,7 @@ class SampleData extends Seeder
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '20.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '20.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -294,7 +294,7 @@ class SampleData extends Seeder
                 'original_price' => 20.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '20.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '20.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -313,7 +313,7 @@ class SampleData extends Seeder
                 'original_price' => 80.00,
                 'imposes_pre_invoice_negotiation' => false,
                 'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
-                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '80.00', 'cost' =>'', 'supplier_share'=>'']]),
+                'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '80.00', 'cost' => '', 'supplier_share' => '']]),
                 'custom_attributes' => json_encode([
                     'mandatory' => false,
                     'pre_included' => false,
@@ -323,6 +323,68 @@ class SampleData extends Seeder
             ],
         ]);
 
+        $id1 = DB::table('product_types')->insertGetId([
+            'category_id' => $boxServiceCategoryId,
+            'supplier_id' => $novaId,
+            'created_by' => $adminId,
+            'name' => '3 Month Recording',
+            'sku' => 'box-srv-rec3',
+            'active' => true,
+            'stock_less' => true,
+            'original_price' => 0,
+            'imposes_pre_invoice_negotiation' => false,
+            'appears_in_listing' => false,
+            'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+            'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '0', 'cost' => '', 'supplier_share' => '']]),
+            'custom_attributes' => json_encode([
+                'mandatory' => false,
+                'pre_included' => false,
+            ]),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $id2 = DB::table('product_types')->insertGetId([
+            'category_id' => $boxServiceCategoryId,
+            'supplier_id' => $novaId,
+            'created_by' => $adminId,
+            'name' => '6 Month Recording',
+            'sku' => 'box-srv-rec6',
+            'active' => true,
+            'stock_less' => true,
+            'original_price' => 10,
+            'imposes_pre_invoice_negotiation' => false,
+            'appears_in_listing' => false,
+            'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+            'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '10', 'cost' => '', 'supplier_share' => '']]),
+            'custom_attributes' => json_encode([
+                'mandatory' => false,
+                'pre_included' => false,
+            ]),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $id3 = DB::table('product_types')->insertGetId([
+            'category_id' => $boxServiceCategoryId,
+            'supplier_id' => $novaId,
+            'created_by' => $adminId,
+            'name' => '9 Month Recording',
+            'sku' => 'box-srv-rec9',
+            'active' => true,
+            'stock_less' => true,
+            'original_price' => 20,
+            'imposes_pre_invoice_negotiation' => false,
+            'appears_in_listing' => false,
+            'periodicity' => \App\ProductType::PERIODICITY_MONTHLY,
+            'upsell_alternatives' => json_encode([['amount' => 1, 'price' => '20', 'cost' => '', 'supplier_share' => '']]),
+            'custom_attributes' => json_encode([
+                'mandatory' => false,
+                'pre_included' => false,
+            ]),
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now(),
+        ]);
         $vatId = DB::table('tax_groups')->insertGetId([
             'user_id' => $adminId,
             'name' => 'Vat',
@@ -336,9 +398,9 @@ class SampleData extends Seeder
             'updated_at' => Carbon::now(),
         ]);
 
-        $skus = ['box-1','box-2','box-4','box-8','box-16','box-srv-tp', 'Call Center', 'box-srv-cb', 'box-srv-rsv', 'box-srv-svy', 'box-srv-pm'];
+        $skus = ['box-1', 'box-2', 'box-4', 'box-8', 'box-16', 'box-srv-tp', 'Call Center', 'box-srv-cb', 'box-srv-rsv', 'box-srv-svy', 'box-srv-pm', 'box-srv-rec3', 'box-srv-rec6', 'box-srv-rec9'];
         $productTypeIds = DB::table('product_types')->select('id')->whereIn('sku', $skus)->pluck('id')->toArray();
-        DB::table('product_type_tax_groups')->insert(array_map(function($productTypeId) use ($vatId){
+        DB::table('product_type_tax_groups')->insert(array_map(function ($productTypeId) use ($vatId) {
             return [
                 'product_type_id' => $productTypeId,
                 'tax_group_id' => $vatId,

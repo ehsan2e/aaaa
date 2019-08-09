@@ -192,6 +192,7 @@ class ProductType extends Model
         return supervisedTransaction(function () use ($creator, $data): ?ProductType {
             $instance = new self($data);
             $instance->type = self::TYPE_CONFIGURABLE;
+            $instance->sku = $data['sku'];
             $instance->prepareBooleanFields($data);
             $instance->category_id = $data['category_id'] ?? null;
             $instance->creator()->associate($creator);
