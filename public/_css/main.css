@@ -1,0 +1,1351 @@
+@charset "UTF-8";
+/* CSS Document */
+
+/*  copyRight Navid Majd 2020
+    Nova VoIP color palette
+
+Black     rgb(0, 0, 0)
+White     rgb(255, 255, 255)
+Gray      rgb(242, 242, 242) Bottom Menu Background
+Blue      rgb(0, 78, 160) Benefit Icon Background, Benefit box title font, Link below Images, Benefit Divider line, Tick marks 
+Orange    rgb(242, 110, 37) (Not Used Yet)
+
+*/
+/* global styles --------------------------------------------------------------------------------------------------------------*/
+/*html5 display rule*/
+h2 {
+    font-size: 1em;
+    margin: 0;
+}
+address, article, aside, canvas, details, figcaption, figure, footer, header, hgroup, nav, menu, nav, section, summary {
+	display: ;
+}
+h1 {
+    clear: both;
+}
+.banner {
+    clear: both;
+}
+a:visited {
+    color: blue;
+}
+a {
+    color: blue;
+}
+
+a:hover {
+	color: rgb(0, 78, 160);
+	border-bottom: 1px solid rgb(0, 78, 160);
+}
+
+html {
+	background: rgb(255, 255, 255);
+}
+
+body {
+	font: 100% "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+	line-height: 1.5;
+	position: relative;
+	background: rgb(255, 255, 255);
+	font-weight:normal;
+	font-style:normal;
+}
+
+h1 {  
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;  
+    font-size: 1.7em;
+    margin-top: 2em;
+    border: transparent rgba(255, 255, 255, .01)
+} 
+
+h2 {
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;  
+}
+
+h3 { 
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;  
+    color: rgb(0, 78, 160);
+    font-size: 1.7em;
+} 
+
+p 
+{ 
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+} 
+
+blockquote 
+{ 
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; 
+} 
+
+pre 
+{ 
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif; 
+    
+}
+
+nav ul {
+	list-style: none;
+    margin: 0;
+    width: 100%;
+    padding: 0;
+}
+
+li {
+    margin: 0;
+    width: 100%;
+    padding: 0;
+}
+
+strong {
+	font-weight: bold;
+}
+
+em {
+	font-style: italic;
+}
+/*Basic layout styles -----------------------------------------------------------------------------------------------------------*/
+
+body {
+	width: 100%;
+	margin: 0 auto;
+}
+
+article {
+    width: 90%;
+	margin: 0 auto;
+    
+}
+
+#pageFooter {
+	clear:both;
+	overflow:hidden;
+	height: ;
+}
+/*nav styles*/
+.mainMenu {
+    float: left;
+    margin-right: 1.5%;
+    text-transform: uppercase;
+	display: block;
+	border: none;
+	font-size: .7em;
+	text-align: center;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.userMenu {
+    float: left;
+    margin-right: 1.5%;
+    text-transform: uppercase;
+	display: block;
+	border: none;
+	font-size: .7em;
+	text-align: center;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    
+}
+}
+
+#mainNav{
+    /*position: fixed;*/
+    top: 0;
+    margin: 1.5em auto;
+	overflow: hidden;
+	margin-bottom: 1em;
+    height: 100px;
+    width: 100%;
+
+}
+#logo {
+    text-align: left;
+    margin-right: 3.5%;
+    margin-top: 10px;
+    margin-left: 1%;
+    width: 7.3%;
+    padding-left: 0;
+    padding-top: 0;
+    max-width: 115px;
+    min-width: 92px;
+}
+#logo:hover {
+    border-bottom: none;
+}
+#learning {
+}
+#services {
+}
+#packages {
+}
+#products {
+}
+#support {
+    margin-right: 3.5%;
+}
+
+.miniNav {
+    display: none;
+}
+
+#mainNav input {
+    float: right;
+    border: none;
+    font-size:1em;
+    padding: .4em .5em;
+    padding-left: 30px;
+    margin-right: 1em;
+    background: url(../_img/Icon%201.png) no-repeat -440px -135px;
+}
+
+::placeholder {
+    font-size: .6em;
+}
+#cart {
+    float: right;
+    background: url(../_img/Icon%201.png) no-repeat -10px -235px;
+    padding-right: 30px;
+    
+}
+#signIn {
+    float: right;
+    background: url(../_img/Icon%201.png) no-repeat -95px -230px;
+    padding-right: 40px;
+}
+#mainNav a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+
+/*-------------------------------------------------------------------*/
+.mySlides1, .mySlides2 {
+    display: block
+}
+
+img {
+    vertical-align: middle;
+}
+
+/* Slideshow container */
+.slideshow-container {
+    margin: auto;
+    max-width: 100%;
+    position: relative;
+}
+.slideshow-container img {
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;  
+}
+
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  border-color: rgba(0, 0, 0, .1);
+  user-select: none;
+  background-color: rgba(0, 0, 0, .2);
+}
+/* Position the "next button" to the right */
+.next {
+  right: 0;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a grey background color */
+.prev:hover, .next:hover {
+  background-color: #f1f1f1;
+  color: black;
+}
+.dot {
+  cursor: pointer;
+  height: 15px;
+  width: 15px;
+  margin: 0 2px;
+  background-color: #bbb;
+  border-radius: 50%;
+  display: inline-block;
+  transition: background-color 0.6s ease;
+}
+
+.active, .dot:hover {
+  background-color: #717171;
+}
+.slideButtom {
+    position: absolute;
+    background-color: black;
+    color: white;
+    width: 120px;
+    height: 30px;
+    text-align: center;
+    left: 7%;
+    bottom: 22%;
+    padding-top: 10px;
+    font-weight: bold;
+    font-size: .85em;
+    border: 1px solid black;
+}
+
+/*-----------------------------------------------------------------------*/
+/* link styles */
+
+/* tabs style */
+
+#tabSection{
+    position: relative;
+}
+.tabList { 
+    margin: 0;
+    padding: 0;
+    width: 40%;
+    max-width: 1000px; 
+}
+.tab {
+    min-width: 300px;
+    max-width: 630px; 
+    height: 350px;
+    list-style-type: none;
+    border-right: 5px solid rgb(0, 78, 160);
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    clear: none;
+    column-count: 3;
+    column-fill: balance;
+}
+.tabcontent {
+    display: none;
+}
+
+    /* Style the buttons that are used to open the tab content */
+.tab button {
+    float: left;
+    margin-top: 10px;
+    margin-right: 0%;
+    margin-left: 0px;
+    width: 100px;
+    height: 94px;
+    display: block;
+    color: black;
+    border: none;
+    outline: none;
+    text-align: center;
+    cursor: pointer;
+    background-color: rgb(255, 255, 255);
+    padding-top: 75px;
+    padding-left: 10px;
+    padding-right: 10px;
+    clear: none;
+}
+
+    /* Change background color of buttons on hover */
+.tab button:hover {
+    filter: invert(100%);
+    background-color: rgb(0, 78, 160);
+    color: rgb(255, 255, 255);
+}
+
+#firstBenefit {
+    background: url(../_img/Icon%201.png) no-repeat 0px -20px;
+}
+#secondBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -100px -15px;
+}
+#thirdBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -200px -20px;
+    margin-right: 0;
+}
+#forthBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -300px -13px;
+}
+#fifthBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -400px -20px;
+}
+#sixthBenefit {
+    background: url(../_img/Icon%201.png) no-repeat 10px -120px;
+    margin-right: 0;
+}
+#seventhBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -100px -120px;
+}
+#eighthBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -197px -113px;
+}
+#ninthBenefit {
+    background: url(../_img/Icon%201.png) no-repeat -300px -120px;
+    margin-right: 0;
+    height: 110px;
+}
+#firstBenefit:hover {
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#secondBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#thirdBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#forthBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#fifthBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#sixthBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#seventhBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#eighthBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+#ninthBenefit:hover{
+    filter: invert(100%);
+    color: rgb(0, 0, 0);
+    background-color: rgb(255, 177, 95);
+}
+
+#callFeatures  {
+}
+
+#mobility  {
+}
+
+#conferencing {
+}
+
+#collaboration {
+}
+
+#callanalytics {
+}
+
+ #integration {
+}
+
+ #security {
+}
+
+ #QoS {   
+}
+
+ #professionalServices  {
+}
+
+    /* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+    /* Style the tab content */
+.tabContentSection {
+    position: absolute;
+    left: 35%;
+    margin: auto;
+    top: 0px;
+    margin-left: 9%;
+    padding-left: 10px;
+
+}
+.tabcontent p {
+    padding: 10px auto;
+    
+}
+
+.tabContentSection ul{
+    list-style-image: url(../_img/Logo/checkSignBlue.png) ;
+}
+.pakages {
+    width: 100%;
+    column-count: 4;
+    padding-left: 0;
+}
+.pakages li{
+    list-style: none;
+
+}
+.pakage h2 {
+        padding-top: 150px;
+    }
+    
+#pakage1 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+#pakage2 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+#pakage3 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+#pakage4 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+.productSection {
+        position: static;
+        top: 100px;
+        margin-top: 150px;
+    }
+
+.products{
+    width: 100%;
+    column-count: 4;
+    padding-left: 0;
+
+}
+.products li {
+    list-style: none;
+
+}
+    
+.product h2 {
+    padding-top: 150px;
+}
+
+#product1 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+#product2 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+
+#product3 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat; 
+}
+
+#product4 {
+    background: url(../_img/Template_Image_195x150.png) no-repeat;
+}
+/* footer styles */
+#pageFooter span {
+    float: left;
+    padding-left: 5%;
+    margin:auto 0;
+    line-height: 40px;
+}
+.socialMediaLinks {
+    padding: 0;
+    width:10%;
+    min-width: 170px;
+    column-count: 4;
+    column-gap: 0em;
+}
+.socialMediaLinks li{
+    list-style: none;
+    width: 40px;
+    height: 40px;
+}
+#Facebook {
+    background: url(../_img/Icon%201.png) no-repeat -330px -230px;
+
+}
+#twitter {
+    background: url(../_img/Icon%201.png) no-repeat -425px -230px;
+
+}
+#linkedin {
+    background: url(../_img/Icon%201.png) no-repeat -31px -325px;
+
+}
+#instagram {
+    background: url(../_img/Icon%201.png) no-repeat -334px -230px;
+
+}
+#extraNav {
+    background-color: rgb(242, 242, 242);
+    border-bottom: 1px rgb(242, 242, 242);
+    height: 70px;
+    padding-top: 20px;
+}
+#extraNav a {
+    color: rgb(0, 0, 0);
+    text-decoration: none;
+}
+#extraNav ul{
+    list-style: none;
+    font-size: .9em;
+    margin-bottom: 0em;
+}
+#language {
+    float:left;
+    margin-right: 20%;
+    width:10%;
+    
+}
+.extraNavBar {
+    float:left;
+    margin-right: 1.4%;   
+}
+
+
+#copyRight {
+    float: right; 
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-right: 2%;
+    width:100px;
+}
+/* language button*/
+/*the container must be positioned relative:*/
+.customSelect {
+  position: relative;
+}
+
+.customSelect select {
+  display: none; /*hide original SELECT element:*/
+}
+
+.select-selected {
+  background: url(../_img/Logo/globe.png) no-repeat ;
+  width: 100px;
+  height: 30px;
+  border: none;
+  text-align: center;    
+  margin-right: 0;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,.select-selected {
+  color: #000;
+  padding: 0px 16px;
+  cursor: pointer;
+  user-select: none;
+  text-align: center; 
+}
+
+/*style items (options):*/
+.select-items {
+  position: absolute;
+  background-color: rgba(242, 242, 242, .5);
+  border: transparent rgb(0, 78, 160) 1px;
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  width: 130px;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+  display: none;
+}
+
+.select-items div:hover, .same-as-selected {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* tablet styles */
+@media all and (min-width: 632px) and (max-width: 922px) {
+    
+/* Hide the link that should open and close the topnav on small screens */
+
+/*mainNav */
+    nav {
+        height: 35px;
+    }
+    .mainMenu {
+        display: none;
+    }    
+    
+    li .miniNav {
+        font-size: 1.5em;
+        float: left;
+        display: block;
+        background-color: rgb(255, 255, 255);
+        border: none;
+    }
+    .mininav.active {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .responsive {
+        
+        position: absolute;
+        top: 200px;
+        display: block;
+        text-align: left;
+        z-index: 99;
+        width:100%;
+        background-color: ghostwhite;
+    }
+    li #signIn{
+        color: white;
+    }
+    
+    li #cart{
+        color: white;
+    }
+    
+    #learning {
+        top: 40px;
+    }
+    #services {
+        top: 70px;
+    }
+    #packages {
+        top: 100px;
+    }
+    #products {
+        top: 130px;
+    }
+    #support {
+        top: 160px;
+    }
+    
+    
+    #logo {
+        display: block;
+        position: absolute;
+        text-align: center;
+        margin-right: 3.5%;
+        margin-left: 33%;
+        margin-top: 0;
+        width: 20%;
+        padding-left: 0;
+        padding-top: 0;
+    } 
+    
+    #mainNav input {
+        float: left;
+        border: none;
+        font-size:1em;
+        padding: .5em;
+        padding-left: 30px;
+        margin-right: 1em;
+        background: url(../_img/Icon%201.png) no-repeat -438px -132px;
+        width: 100px;
+    } 
+    
+    #mainNav{
+        /*position: fixed;*/
+        top: 0;
+        margin: 0 auto;
+
+    }  
+    article {
+	   width: 100%;
+	   margin: 0 auto;
+    
+    }
+    /* tabs style */
+
+    #tabSection{
+        position: relative;
+        height: 400px;
+    }
+    .tabList { 
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    .tab { 
+        column-count: 3;
+        height: 350px;
+        column-fill: balance;
+        border: none;
+        margin-left: 20%
+
+    }
+    .tabcontent {
+        display: none;
+    }
+
+    /* Style the buttons that are used to open the tab content */
+    .tab button {
+    }
+
+        /* Change background color of buttons on hover */
+
+    .tab button:hover {
+        filter: none;
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+    }
+
+    #firstBenefit {
+        background: url(../_img/Icon%201.png) no-repeat 0px -20px;
+    }
+    #secondBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -100px -15px;
+    }
+    #thirdBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -200px -20px;
+        margin-right: 0;
+    }
+    #forthBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -300px -13px;
+    }
+    #fifthBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -400px -20px;
+    }
+    #sixthBenefit {
+        background: url(../_img/Icon%201.png) no-repeat 10px -120px;
+        margin-right: 0;
+    }
+    #seventhBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -100px -120px;
+    }
+    #eighthBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -197px -113px;
+    }
+    #ninthBenefit {
+        background: url(../_img/Icon%201.png) no-repeat -300px -120px;
+        margin-right: 0;
+    }
+    #firstBenefit:hover {
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #secondBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #thirdBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #forthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #fifthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #sixthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #seventhBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #eighthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+    }
+    #ninthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+        height: 110px;
+    }
+    .tabContentSection {
+    position: static;
+    margin: auto;
+    top: 60px;
+    margin-left: 2%;
+    clear: both;
+
+    }
+
+    .defaultTabContent h3 {
+        font-size: 1.2em;
+    }
+
+    .defaultTabContent p {
+        font-size: .8em;
+    }
+
+    .tabcontent h3 {
+        font-size: 1.2em;
+    }
+
+    .tabcontent p {
+        font-size: .8em;
+    }
+
+    .tabcontent ul {
+        column-count: 2;
+        margin-top: 0;
+        column-gap: 30px;
+    }
+
+    .tabcontent h3 {
+        margin-top: 0;
+        margin-bottom: .5em;
+    }
+
+    .tabContentSection ul{
+        list-style-image: url(../_img/Logo/checkSignBlue.png) ;
+    }
+    .pakageSection {
+        position: static;
+        top: 100px;
+        margin-top: 150px;
+    }
+
+    .pakages {
+        width: 100%;
+        column-count: 2;
+        padding-left: 0;
+
+    }
+    
+
+    .pakages li{
+        list-style: none;
+
+    }
+
+    .pakage h2 {
+        padding-top: 150px;
+    }
+
+    #pakage1 {
+        back: url(../_img/Template_Image_300x174.png) no-repeat no-repeat;
+    }
+
+    #pakage2 {
+        back: url(../_img/Template_Image_300x174.png) no-repeat no-repeat;
+    }
+
+    #pakage3 {
+        back: url(../_img/Template_Image_300x174.png) no-repeat no-repeat;
+    }
+
+    #pakage4 {
+        back: url(../_img/Template_Image_300x174.png) no-repeat no-repeat;
+    }
+
+    .products{
+        width: 100%;
+        column-count: 4;
+        padding-left: 0;
+
+    }
+
+    .products li {
+        list-style: none;
+
+    }
+    .productSection {
+        position: static;
+        top: 100px;
+        margin-top: 150px;
+    }
+
+    .products {
+        width: 100%;
+        column-count: 2;
+        padding-left: 0;
+
+    }
+
+    .products li{
+        list-style: none;
+
+    }
+
+    .product h2 {
+        padding-top: 150px;
+    }
+
+    #product1 {
+        background: url(../_img/Template_Image_300x174.png) no-repeat;
+    }
+
+    #product2 {
+        background: url(../_img/Template_Image_300x174.png) no-repeat;
+    }
+
+    #product3 {
+        background: url(../_img/Template_Image_300x174.png) no-repeat;
+    }
+
+    #product4 {
+        background: url(../_img/Template_Image_300x174.png) no-repeat;
+    }
+
+    /*footer*/
+    
+    #language {
+        float:left;
+        margin-right: 0;
+        width: 10%;
+        font-size: .7em;
+        line-height: 30px;
+        
+    }
+    .extraNavBar {
+        float:left;
+        margin-right: 1.4%;   
+        font-size: .7em;
+        height: 30px;
+        line-height: 30px;
+    }
+    #siteMap {
+        margin-left: 10%;
+    }
+    #copyRight {
+        float: right; 
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 1%;
+        width:70px;
+        font-size: .7em;
+        height: 30px;
+        line-height: 30px;
+    }
+    
+    .customSelect {
+        width: 130px;
+        
+    }
+    #lang-switch div{
+        padding-left: 20px;
+    }
+    
+    
+    
+}
+/* mobile styles */
+@media all and (max-width: 631px) {
+    
+/* Hide the link that should open and close the topnav on small screens */
+
+/*mainNav */
+    .mainMenu {
+        display: none;
+    }
+    li .miniNav {
+        font-size: 1.5em;
+        float: left;
+        display: block;
+        background-color: rgb(255, 255, 255);
+        border: none;
+    }
+    .mininav.active {
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    .responsive {
+        
+        position: absolute;
+        top: 200px;
+        display: block;
+        text-align: left;
+        z-index: 99;
+        width:100%;
+        background-color: ghostwhite;
+    }
+    
+    li #signIn{
+        color: white;
+    }
+    
+    li #cart{
+        color: white;
+    }
+    
+    #learning {
+        top: 40px;
+    }
+    #services {
+        top: 70px;
+    }
+    #packages {
+        top: 100px;
+    }
+    #products {
+        top: 130px;
+    }
+    #support {
+        top: 160px;
+    }
+    
+    #logo {
+        display: block;
+        position: absolute;
+        text-align: center;
+        margin-right: 3.5%;
+        margin-left: 33%;
+        width: 20%;
+        padding-left: 0;
+        padding-top: 0;
+        margin-top: 10px;
+    } 
+    
+    #mainNav input {
+        float: left;
+        border: none;
+        font-size:1em;
+        padding: .5em;
+        padding-left: 30px;
+        margin-right: 1em;
+        background: url(../_img/Icon%201.png) no-repeat -438px -133px;
+        width: 50px;
+    }  
+    
+    #mainNav{
+        /*position: fixed;*/
+        top: 0;
+        margin: 0 auto;
+
+    }  
+    article {
+        width: 100%;
+        margin: 0 auto;
+    
+    }
+    /* tabs style */
+
+    #tabSection{
+        position: relative;
+        height: 480px;
+    }
+    .tabList { 
+        margin: 0;
+        padding: 0;
+        width: 100%;
+    }
+    .tab { 
+        column-count: 3;
+        height: 350px;
+        column-fill: balance;
+        border: none;
+
+    }
+    .tabcontent {
+        display: none;
+    }
+
+        /* Change background color of buttons on hover */
+
+    .tab button:hover {
+        filter: none;
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+    }
+
+    .tabContentSection {
+        position: static;
+        margin: auto;
+        top: 60px;
+        margin-left: 2%;
+        clear: both;
+
+    }
+
+    .defaultTabContent h3 {
+        font-size: 1em;
+    }
+
+    .defaultTabContent p {
+        font-size: .8em;
+    }
+
+    .tabcontent h3 {
+        font-size: 1em;
+    }
+
+    .tabcontent p {
+        font-size: .8em;
+    }
+
+    .tabcontent ul {
+        column-count: 1;
+        margin-top: 0;
+    }
+
+    .tabcontent h3 {
+        margin-top: 0;
+        margin-bottom: .5em;
+    }
+
+    .tabContentSection ul{
+        list-style-image: url(../_img/Logo/checkSignBlue.png) ;
+    }
+    
+    #ninthBenefit:hover{
+        filter: invert(100%);
+        color: rgb(0, 0, 0);
+        background-color: rgb(255, 177, 95);
+        height: 110px;
+    }
+    
+    .pakageSection {
+        position: static;
+        top: 100px;
+        margin-top: 150px;
+    }
+
+    .pakages {
+        width: 100%;
+        column-count: 1;
+        padding-left: 0;
+
+    }
+
+    .pakages li{
+        list-style: none;
+
+    }
+
+    .pakage h2 {
+        padding-top: 150px;
+    }
+
+    #pakage1 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat no-repeat;
+    }
+
+    #pakage2 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat no-repeat;
+    }
+
+    #pakage3 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat no-repeat;
+    }
+
+    #pakage4 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat no-repeat;
+    }
+
+    .products{
+        width: 100%;
+        column-count: 1;
+        padding-left: 0;
+
+    }
+
+    .productSection {
+        position: static;
+        top: 100px;
+        margin-top: 150px;
+    }
+
+
+    .products li{
+        list-style: none;
+
+    }
+
+    .product h2 {
+        padding-top: 150px;
+    }
+
+    #product1 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat;
+    }
+
+    #product2 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat;
+    }
+
+    #product3 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat;
+    }
+
+    #product4 {
+        background: url(../_img/Template_Image_330x174.png) no-repeat;
+    }
+
+    #extraNav {
+        column-count: 1;
+        height: 200px;
+    }
+    
+    #language {
+        float:left;
+        margin-right: 0;
+        width:10%;
+        margin-left: 29%;
+    }
+    .extraNavBar {
+        float:left; 
+        width:50%;
+        margin-left: 40%;
+    }
+
+    #copyRight {
+        float: left; 
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 40%;
+        width: 10%;
+}
+   
+
+/* destop styles */
+
+@media all and (min-width: 923px) {
+    #language {
+        float:left;
+        margin-right: 0;
+        width:10%;
+    }
+    
+    .extraNavBar {
+        float:left;
+        margin-right: 1.4%;   
+    }
+    
+    #siteMap {
+        margin-left: 40%;
+    }
+    
+    #copyRight {
+        float: right; 
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 2%;
+        width:100px;
+    }
+    .pakages {
+        width: 100%;
+        column-count: 4;
+        padding-left: 0;
+    }
+    .products {
+        padding-left: 0;
+
+    }
+    
+}
+
+
+
+
