@@ -22,6 +22,22 @@ if (app()->isLocal()) {
         ->name('fake-payment.request');
     Route::post('fake-payment/verify', 'FakePaymentController@verify')
         ->name('fake-payment.verify');
+    Route::get('ehsan', function(){
+        $files = [];
+        foreach (['index', 'features', 'prices', 'why-choose'] as $file) {
+            $content = file_get_contents(base_path('resources/views/site/' . $file . '.blade.php'));
+            preg_match_all('/url\\(\\/site-asset\\/(.+\.\\w+)\\)/', $content, $matches);
+            foreach ($matches[1] as $match){
+                $files[] = 'https://www.mightycall.com/wp-content/themes/newmightycall/' . $match;
+            }
+        }
+        foreach ($files as $file){
+            $ch = curl_init($file);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $content = curl_exec($ch);
+
+        }
+    });
 }
 
 

@@ -69,7 +69,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('temp-home');
+        return view('site.index');
     }
 
     public function privacyPolicy(){
